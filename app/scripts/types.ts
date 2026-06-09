@@ -30,7 +30,9 @@ export type ExtensionMessage =
   | { action: "getRecentCommands"; data: { commandKey: string } }
   | { action: "searchBookmarks"; data: { searchKeyword: string } }
   | { action: "openBookmark"; data: { url: string } }
-  | { action: "groupTabsByRule"; data: { ruleId: string } };
+  | { action: "groupTabsByRule"; data: { ruleId: string } }
+  | { action: "getOpenAndCloseShortcut" }
+  | { action: "closePopup" };
 
 export enum StoreType {
   LOCAL = "local",

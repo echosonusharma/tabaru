@@ -1,11 +1,23 @@
-/* Tabaru Content Script - Glass Apple Theme */
+/* Tabaru Content Script */
+
+/* ── Default Theme Variables (Tabaru) ──────────────────────────────────── */
+
+:host {
+  --t-accent-rgb: 207, 167, 56;
+  --t-bar: #cfa738;
+  --t-modal-bg: rgba(22, 20, 14, 0.80);
+  --t-backdrop-bg: rgba(10, 10, 6, 0.6);
+  --t-fg: #f0e6c0;
+  --t-fg-rgb: 240, 230, 192;
+  --t-muted-rgb: 90, 80, 64;
+}
 
 /* ── Animations ────────────────────────────────────────────────────────── */
 
 @keyframes zen-fade-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: translate(-50%, -48%) scale(0.97);
   }
 
   to {
@@ -15,13 +27,8 @@
 }
 
 @keyframes zen-backdrop-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── Backdrop ──────────────────────────────────────────────────────────── */
@@ -30,27 +37,29 @@
   position: fixed !important;
   inset: 0 !important;
   z-index: 9999999998 !important;
-  background: rgba(0, 0, 0, 0.45) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  animation: zen-backdrop-in 0.2s ease-out !important;
+  background: var(--t-backdrop-bg) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  animation: zen-backdrop-in 0.15s ease-out !important;
 }
 
-/* ── Modal Container ───────────────────────────────────────────────────── */
+/* ── Modal Container — frosted glass ──────────────────────────────────── */
 
 #tabaru-content {
   width: 560px !important;
   max-width: calc(100vw - 32px) !important;
   max-height: min(460px, calc(100vh - 32px)) !important;
-  background: rgba(30, 30, 30, 0.78) !important;
-  backdrop-filter: blur(40px) saturate(1.8) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(1.8) !important;
+
+  background: var(--t-modal-bg) !important;
+  backdrop-filter: blur(48px) saturate(1.6) brightness(1.05) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(1.6) brightness(1.05) !important;
+
   padding: 0 !important;
-  border-radius: 16px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.18) !important;
   box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.45),
-    0 0 0 0.5px rgba(255, 255, 255, 0.05) inset !important;
+    0 24px 72px rgba(0, 0, 0, 0.6),
+    0 0 0 0.5px rgba(var(--t-accent-rgb), 0.08) inset !important;
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
@@ -58,11 +67,11 @@
   display: flex !important;
   flex-direction: column !important;
   z-index: 9999999999 !important;
-  color: #f0f0f0 !important;
+  color: var(--t-fg) !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
-  animation: zen-fade-in 0.2s ease-out !important;
+  animation: zen-fade-in 0.15s ease-out !important;
 }
 
 /* ── Search Header ─────────────────────────────────────────────────────── */
@@ -74,6 +83,7 @@
   position: relative !important;
   box-sizing: border-box !important;
   gap: 8px !important;
+  border-bottom: 1px solid rgba(var(--t-accent-rgb), 0.08) !important;
 }
 
 #tabaru-content .search-icon {
@@ -83,33 +93,33 @@
   transform: translateY(-50%) !important;
   width: 16px !important;
   height: 16px !important;
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(var(--t-accent-rgb), 0.45) !important;
   pointer-events: none !important;
   z-index: 1 !important;
 }
 
 #tabaru-content .search-input {
   flex: 1 !important;
-  padding: 12px 40px 12px 40px !important;
+  padding: 11px 40px 11px 40px !important;
   font-size: 15px !important;
   font-weight: 400 !important;
   border: none !important;
-  border-radius: 10px !important;
+  border-radius: 4px !important;
   outline: none !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #f0f0f0 !important;
+  background: rgba(var(--t-accent-rgb), 0.06) !important;
+  color: var(--t-fg) !important;
   transition: background 0.2s ease, box-shadow 0.2s ease !important;
   box-sizing: border-box !important;
   letter-spacing: 0.01em !important;
 }
 
 #tabaru-content .search-input:focus {
-  background: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 0 0 1.5px rgba(207, 167, 56, 0.5) !important;
+  background: rgba(var(--t-accent-rgb), 0.09) !important;
+  box-shadow: 0 0 0 1.5px rgba(var(--t-accent-rgb), 0.4) !important;
 }
 
 #tabaru-content .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(var(--t-accent-rgb), 0.28) !important;
   font-weight: 400 !important;
 }
 
@@ -122,7 +132,7 @@
   transform: translateY(-50%) !important;
   background: none !important;
   border: none !important;
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(var(--t-accent-rgb), 0.3) !important;
   font-size: 18px !important;
   cursor: pointer !important;
   width: 26px !important;
@@ -130,7 +140,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 6px !important;
+  border-radius: 3px !important;
   transition: all 0.15s ease !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -138,8 +148,8 @@
 }
 
 #tabaru-content .close-button:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #f0f0f0 !important;
+  background: rgba(var(--t-accent-rgb), 0.1) !important;
+  color: var(--t-fg) !important;
 }
 
 /* ── Main Body Container ───────────────────────────────────────────────── */
@@ -158,9 +168,9 @@
   padding: 8px 20px 4px 20px !important;
   font-size: 11px !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(var(--t-accent-rgb), 0.4) !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.6px !important;
+  letter-spacing: 0.7px !important;
 }
 
 /* ── Results List ──────────────────────────────────────────────────────── */
@@ -177,9 +187,8 @@
   scroll-behavior: smooth !important;
 }
 
-/* Thin macOS-style scrollbar */
 #tabaru-content .search-results::-webkit-scrollbar {
-  width: 6px !important;
+  width: 4px !important;
 }
 
 #tabaru-content .search-results::-webkit-scrollbar-track {
@@ -187,40 +196,33 @@
 }
 
 #tabaru-content .search-results::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 3px !important;
+  background: rgba(var(--t-accent-rgb), 0.2) !important;
+  border-radius: 2px !important;
 }
 
 #tabaru-content .search-results::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18) !important;
+  background: rgba(var(--t-accent-rgb), 0.35) !important;
 }
 
 /* ── Tab Items ─────────────────────────────────────────────────────────── */
 
 #tabaru-content .tab-item {
-  padding: 10px 12px !important;
+  padding: 9px 12px !important;
   cursor: pointer !important;
-  transition: background 0.12s ease !important;
-  color: #f0f0f0 !important;
+  transition: background 0.1s ease !important;
+  color: var(--t-fg) !important;
   display: flex !important;
   align-items: center !important;
-  margin: 0 0 4px 0 !important;
+  margin: 0 0 2px 0 !important;
   background: transparent !important;
-  border-radius: 8px !important;
+  border-radius: 4px !important;
   gap: 12px !important;
-  animation: tab-in 0.2s ease-out backwards !important;
+  animation: tab-in 0.15s ease-out backwards !important;
 }
 
 @keyframes tab-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 #tabaru-content .search-results .tab-item:last-child {
@@ -228,27 +230,27 @@
 }
 
 #tabaru-content .tab-item:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(var(--t-accent-rgb), 0.07) !important;
 }
 
 #tabaru-content .tab-item.selected {
-  background: rgba(207, 167, 56, 0.12) !important;
+  background: rgba(var(--t-accent-rgb), 0.12) !important;
 }
 
 #tabaru-content .tab-item.selected:hover {
-  background: rgba(207, 167, 56, 0.18) !important;
+  background: rgba(var(--t-accent-rgb), 0.16) !important;
 }
 
 #tabaru-content .tab-item.recent-tab {
-  background: rgba(120, 181, 255, 0.05) !important;
+  background: rgba(var(--t-muted-rgb), 0.12) !important;
 }
 
 #tabaru-content .tab-item.recent-tab:hover {
-  background: rgba(120, 181, 255, 0.1) !important;
+  background: rgba(var(--t-muted-rgb), 0.2) !important;
 }
 
 #tabaru-content .tab-item.recent-tab.selected {
-  background: rgba(120, 181, 255, 0.16) !important;
+  background: rgba(var(--t-accent-rgb), 0.12) !important;
 }
 
 /* Active tab accent bar */
@@ -262,10 +264,11 @@
   left: 4px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  width: 3px !important;
-  height: 16px !important;
-  background: #cfa738 !important;
-  border-radius: 2px !important;
+  width: 2px !important;
+  height: 14px !important;
+  background: var(--t-bar) !important;
+  border-radius: 1px !important;
+  box-shadow: 0 0 6px rgba(var(--t-accent-rgb), 0.6) !important;
 }
 
 /* ── Tab Content ───────────────────────────────────────────────────────── */
@@ -274,7 +277,7 @@
   width: 18px !important;
   height: 18px !important;
   object-fit: contain !important;
-  border-radius: 4px !important;
+  border-radius: 3px !important;
   flex-shrink: 0 !important;
 }
 
@@ -300,7 +303,7 @@
   line-height: 1.3 !important;
   margin: 0 !important;
   padding: 0 !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: rgba(var(--t-fg-rgb), 0.95) !important;
 }
 
 #tabaru-content .tab-url {
@@ -314,7 +317,7 @@
   line-height: 1.3 !important;
   margin: 0 !important;
   padding: 0 !important;
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(var(--t-accent-rgb), 0.42) !important;
 }
 
 #tabaru-content .window-badge {
@@ -324,14 +327,13 @@
   gap: 5px !important;
   font-size: 10px !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.45) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(var(--t-accent-rgb), 0.55) !important;
+  background: rgba(var(--t-accent-rgb), 0.07) !important;
   padding: 4px 8px !important;
-  border-radius: 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 3px !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.14) !important;
   margin-left: auto !important;
   white-space: nowrap !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 
 #tabaru-content .history-badge {
@@ -341,11 +343,11 @@
   gap: 5px !important;
   font-size: 10px !important;
   font-weight: 600 !important;
-  color: rgba(120, 181, 255, 0.9) !important;
-  background: rgba(120, 181, 255, 0.12) !important;
+  color: rgba(var(--t-muted-rgb), 0.95) !important;
+  background: rgba(var(--t-muted-rgb), 0.18) !important;
   padding: 4px 8px !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(120, 181, 255, 0.2) !important;
+  border: 1px solid rgba(var(--t-muted-rgb), 0.32) !important;
   margin-left: auto !important;
   white-space: nowrap !important;
 }
@@ -358,7 +360,7 @@
 
 #tabaru-content .no-results {
   text-align: center !important;
-  color: rgba(255, 255, 255, 0.25) !important;
+  color: rgba(var(--t-accent-rgb), 0.25) !important;
   padding: 60px 40px !important;
   font-size: 14px !important;
   font-weight: 400 !important;
@@ -372,7 +374,7 @@
 #tabaru-content .no-results::before {
   content: "🔍" !important;
   font-size: 24px !important;
-  opacity: 0.5 !important;
+  opacity: 0.4 !important;
 }
 
 /* ── Keyboard Hint ─────────────────────────────────────────────────────── */
@@ -383,40 +385,35 @@
   justify-content: center !important;
   gap: 16px !important;
   padding: 10px 16px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top: 1px solid rgba(var(--t-accent-rgb), 0.08) !important;
   font-size: 11px !important;
-  color: rgba(255, 255, 255, 0.25) !important;
+  color: rgba(var(--t-accent-rgb), 0.3) !important;
 }
 
 #tabaru-content .keyboard-hint kbd {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 4px !important;
+  background: rgba(var(--t-accent-rgb), 0.07) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.14) !important;
+  border-radius: 3px !important;
   padding: 1px 5px !important;
   font-size: 10px !important;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace !important;
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(var(--t-accent-rgb), 0.5) !important;
   margin: 0 2px !important;
 }
 
 /* ── Command Mode ─────────────────────────────────────────────────────── */
 
-
-/* Search input glow when command mode is active */
 #tabaru-content .search-input.command-active {
-  box-shadow: 0 0 0 1.5px rgba(168, 130, 255, 0.55) !important;
-  background: rgba(168, 130, 255, 0.08) !important;
+  box-shadow: 0 0 0 1.5px rgba(var(--t-accent-rgb), 0.45) !important;
+  background: rgba(var(--t-accent-rgb), 0.08) !important;
 }
 
 #tabaru-content .search-input.command-active:focus {
-  box-shadow: 0 0 0 1.5px rgba(168, 130, 255, 0.7) !important;
-  background: rgba(168, 130, 255, 0.12) !important;
+  box-shadow: 0 0 0 1.5px rgba(var(--t-accent-rgb), 0.6) !important;
+  background: rgba(var(--t-accent-rgb), 0.11) !important;
 }
 
-/* ── Command Badge (in header, right side) ────────────────────────────── */
-
-
-/* ── Command Panel (replaces tab list) ────────────────────────────────── */
+/* ── Command Panel ────────────────────────────────────────────────────── */
 
 #tabaru-content .command-panel {
   display: flex !important;
@@ -424,9 +421,9 @@
   gap: 16px !important;
   padding: 24px !important;
   margin: 16px !important;
-  border-radius: 12px !important;
-  background: rgba(168, 130, 255, 0.05) !important;
-  border: 1px solid rgba(168, 130, 255, 0.1) !important;
+  border-radius: 5px !important;
+  background: rgba(var(--t-accent-rgb), 0.04) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.1) !important;
   min-height: 280px !important;
   justify-content: center !important;
   flex-direction: column !important;
@@ -439,9 +436,9 @@
   justify-content: center !important;
   width: 32px !important;
   height: 32px !important;
-  border-radius: 8px !important;
-  background: rgba(168, 130, 255, 0.15) !important;
-  color: rgba(168, 130, 255, 0.9) !important;
+  border-radius: 5px !important;
+  background: rgba(var(--t-accent-rgb), 0.12) !important;
+  color: rgba(var(--t-accent-rgb), 0.85) !important;
   flex-shrink: 0 !important;
 }
 
@@ -457,11 +454,10 @@
   margin-bottom: 20px !important;
 }
 
-
 #tabaru-content .command-panel-desc {
   font-size: 13px !important;
   font-weight: 400 !important;
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: rgba(var(--t-accent-rgb), 0.42) !important;
   max-width: 320px !important;
   line-height: 1.5 !important;
 }
@@ -471,10 +467,10 @@
   font-size: 12px !important;
   font-weight: 400 !important;
   font-style: italic !important;
-  color: rgba(255, 255, 255, 0.25) !important;
+  color: rgba(var(--t-accent-rgb), 0.22) !important;
 }
 
-/* ── Command Mode: slim live-preview bar ──────────────────────────────── */
+/* ── Command preview bar ──────────────────────────────────────────────── */
 
 #tabaru-content .command-preview {
   display: flex !important;
@@ -482,9 +478,9 @@
   gap: 12px !important;
   padding: 12px 16px !important;
   margin: 8px 12px 12px 12px !important;
-  border-radius: 10px !important;
-  background: rgba(168, 130, 255, 0.07) !important;
-  border: 1px solid rgba(168, 130, 255, 0.12) !important;
+  border-radius: 5px !important;
+  background: rgba(var(--t-accent-rgb), 0.05) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.12) !important;
 }
 
 #tabaru-content .command-preview.command-preview-dimmed {
@@ -502,7 +498,7 @@
 #tabaru-content .command-preview-action {
   font-size: 10px !important;
   font-weight: 500 !important;
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(var(--t-accent-rgb), 0.32) !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
 }
@@ -510,24 +506,24 @@
 #tabaru-content .command-preview-keyword {
   font-size: 13px !important;
   font-weight: 500 !important;
-  color: rgba(168, 130, 255, 0.9) !important;
+  color: var(--t-bar) !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 
 #tabaru-content .command-preview-enter {
-  background: rgba(168, 130, 255, 0.15) !important;
-  border: 1px solid rgba(168, 130, 255, 0.25) !important;
-  border-radius: 5px !important;
+  background: rgba(var(--t-accent-rgb), 0.1) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.22) !important;
+  border-radius: 4px !important;
   padding: 3px 7px !important;
   font-size: 13px !important;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace !important;
-  color: rgba(168, 130, 255, 0.8) !important;
+  color: rgba(var(--t-accent-rgb), 0.75) !important;
   flex-shrink: 0 !important;
 }
 
-/* ── Command Mode: recent queries rows ───────────────────────────────── */
+/* ── Recent query rows ────────────────────────────────────────────────── */
 
 #tabaru-content .command-recent-icon {
   display: flex !important;
@@ -535,15 +531,30 @@
   justify-content: center !important;
   width: 28px !important;
   height: 28px !important;
-  border-radius: 6px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 4px !important;
+  background: rgba(var(--t-accent-rgb), 0.06) !important;
+  color: rgba(var(--t-accent-rgb), 0.35) !important;
   flex-shrink: 0 !important;
 }
 
 #tabaru-content .command-recent-icon svg {
   width: 14px !important;
   height: 14px !important;
+}
+
+/* ── Command Shortcut Badge ───────────────────────────────────────────── */
+
+#tabaru-content .cmd-shortcut-badge {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  background: rgba(var(--t-accent-rgb), 0.1) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.22) !important;
+  border-radius: 3px !important;
+  padding: 3px 8px !important;
+  font-size: 12px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', monospace !important;
+  color: rgba(var(--t-accent-rgb), 0.8) !important;
+  letter-spacing: 0.03em !important;
 }
 
 /* ── Bookmark Folder Grouping ─────────────────────────────────────────── */
@@ -560,8 +571,8 @@
   font-weight: 600 !important;
   letter-spacing: 0.4px !important;
   text-transform: uppercase !important;
-  color: hsla(var(--folder-hue), 70%, 78%, 0.9) !important;
-  animation: tab-in 0.2s ease-out backwards !important;
+  color: hsla(var(--folder-hue, 200), 60%, 68%, 0.85) !important;
+  animation: tab-in 0.15s ease-out backwards !important;
 }
 
 #tabaru-content .bookmark-folder-header:first-child {
@@ -569,11 +580,11 @@
 }
 
 #tabaru-content .bookmark-folder-dot {
-  width: 6px !important;
-  height: 6px !important;
+  width: 5px !important;
+  height: 5px !important;
   border-radius: 50% !important;
-  background: hsla(var(--folder-hue), 75%, 65%, 0.95) !important;
-  box-shadow: 0 0 6px hsla(var(--folder-hue), 75%, 65%, 0.5) !important;
+  background: hsla(var(--folder-hue, 200), 65%, 60%, 0.9) !important;
+  box-shadow: 0 0 5px hsla(var(--folder-hue, 200), 65%, 60%, 0.45) !important;
   flex-shrink: 0 !important;
 }
 
@@ -588,9 +599,9 @@
   font-size: 10px !important;
   font-weight: 500 !important;
   letter-spacing: 0.3px !important;
-  color: hsla(var(--folder-hue), 60%, 70%, 0.55) !important;
-  background: hsla(var(--folder-hue), 60%, 60%, 0.08) !important;
-  border: 1px solid hsla(var(--folder-hue), 60%, 60%, 0.14) !important;
+  color: hsla(var(--folder-hue, 200), 50%, 60%, 0.5) !important;
+  background: hsla(var(--folder-hue, 200), 50%, 50%, 0.07) !important;
+  border: 1px solid hsla(var(--folder-hue, 200), 50%, 50%, 0.12) !important;
   padding: 1px 6px !important;
   border-radius: 10px !important;
 }
@@ -607,20 +618,20 @@
   left: 4px !important;
   top: 8px !important;
   bottom: 8px !important;
-  width: 2px !important;
-  border-radius: 2px !important;
-  background: hsla(var(--folder-hue), 70%, 60%, 0.35) !important;
+  width: 1px !important;
+  border-radius: 1px !important;
+  background: hsla(var(--folder-hue, 200), 55%, 52%, 0.22) !important;
 }
 
 #tabaru-content .bookmark-item.selected {
-  background: hsla(var(--folder-hue), 70%, 60%, 0.14) !important;
+  background: hsla(var(--folder-hue, 200), 55%, 52%, 0.1) !important;
 }
 
 #tabaru-content .bookmark-item.selected::before {
-  background: hsla(var(--folder-hue), 80%, 65%, 0.9) !important;
-  box-shadow: 0 0 8px hsla(var(--folder-hue), 80%, 65%, 0.5) !important;
+  background: hsla(var(--folder-hue, 200), 65%, 60%, 0.85) !important;
+  box-shadow: 0 0 6px hsla(var(--folder-hue, 200), 65%, 60%, 0.4) !important;
 }
 
 #tabaru-content .bookmark-item:hover {
-  background: hsla(var(--folder-hue), 70%, 60%, 0.08) !important;
+  background: hsla(var(--folder-hue, 200), 55%, 52%, 0.06) !important;
 }

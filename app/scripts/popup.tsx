@@ -4,26 +4,29 @@ import browser from 'webextension-polyfill';
 import '../styles/popup.css';
 import '../styles/content.css';
 import '../styles/fallback.css';
-import { SearchApp } from "./search-app";
+import { SearchApp } from "./features/search_navigation/app";
+import { themeStore, getTheme, applyRootTheme, DEFAULT_THEME_ID } from "./features/theme";
 
 function Popup() {
   useEffect(() => {
     document.documentElement.classList.add('fallback-mode');
     document.body.classList.add('fallback-mode');
 
+    themeStore.get().then((id) => applyRootTheme(getTheme(id ?? DEFAULT_THEME_ID)));
+
     const port = browser.runtime.connect({ name: "popupSearchMode" });
 
-    const handleCommand = (command: string) => {
-      if (command === "open_and_close_search") {
+    const handleMessage = (msg: unknown) => {
+      if ((msg as any)?.action === "closePopup") {
         window.close();
       }
     };
 
-    browser.commands.onCommand.addListener(handleCommand);
+    browser.runtime.onMessage.addListener(handleMessage);
 
     return () => {
       port.disconnect();
-      browser.commands.onCommand.removeListener(handleCommand);
+      browser.runtime.onMessage.removeListener(handleMessage);
     };
   }, []);
 

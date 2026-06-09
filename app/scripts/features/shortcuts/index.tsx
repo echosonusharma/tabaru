@@ -22,25 +22,10 @@ export async function checkAndPromptShortcuts(): Promise<void> {
 
 async function openShortcutSettings(): Promise<void> {
     const url = getShortcutsPageUrl();
-
     try {
         await browser.tabs.create({ url });
-        return;
-    } catch (e) {
-        logger("Error opening shortcuts page programmatically", e);
-    }
-
-    try {
+    } catch {
         window.open(url, "_blank", "noopener,noreferrer");
-        return;
-    } catch (e) {
-        logger("Error opening shortcuts page via window.open", e);
-    }
-
-    try {
-        window.location.href = url;
-    } catch (e) {
-        logger("Error navigating to shortcuts page", e);
     }
 }
 

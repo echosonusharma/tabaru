@@ -3,9 +3,9 @@ import type * as preact from "preact";
 import { memo } from "preact/compat";
 import browser from "webextension-polyfill";
 import { useEffect, useState, useRef, useMemo } from "preact/hooks";
-import { broadcastMsgToServiceWorker, looksLikeDomain } from "./utils";
-import { SearchableTab, CommandDefinition, BookmarkItem } from "./types";
-import { SearchIcon, CommandIcon, HistoryIcon, WindowIcon } from "./icons";
+import { broadcastMsgToServiceWorker, looksLikeDomain } from "../../utils";
+import { SearchableTab, CommandDefinition, BookmarkItem } from "../../types";
+import { SearchIcon, CommandIcon, HistoryIcon, WindowIcon } from "../../icons";
 
 // command prefix will be ! and second char is the type of command
 // commands can only be 2 chars
@@ -135,9 +135,17 @@ const TabComponent = memo(function TabComponent({ tab }: { tab: SearchableTab })
   );
 });
 
-function KeyboardHints({ mode }: { mode: "command" | "suggest" | "normal" }) {
+
+function KeyboardHints({ mode }: { mode: "bookmark" | "command" | "suggest" | "normal" }) {
   return (
     <div className="keyboard-hint">
+      {mode === "bookmark" && (
+        <Fragment>
+          <span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> open</span>
+          <span><kbd>esc</kbd> close</span>
+        </Fragment>
+      )}
       {mode === "command" && (
         <Fragment>
           <span><kbd>↑</kbd> <kbd>↓</kbd> history</span>
@@ -384,7 +392,7 @@ function BookmarkModeBody({
   onSelect: (bookmark: BookmarkItem) => void;
 }) {
   if (bookmarks.length === 0) {
-    return <div className="no-results">No matching bookmarks found</div>;
+    return <div className="no-results">No bookmarks found</div>;
   }
 
   const rows: Array<
@@ -468,6 +476,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     bookmarkResults,
   } = useSearch();
 
+  const [hasNavigated, setHasNavigated] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
 
@@ -533,13 +542,19 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
         return;
       case "ArrowDown":
         e.preventDefault();
+        setHasNavigated(true);
         setSelectedIndex((prev) => Math.min(prev + 1, maxIndex));
         break;
       case "ArrowUp":
         e.preventDefault();
+        setHasNavigated(true);
         setSelectedIndex((prev) => Math.max(prev - 1, isCommandMode && !isBookmarkMode ? -1 : 0));
         break;
       case "Enter":
+        if (!isBookmarkMode && !isCommandMode && !isSuggestingCommands && !searchQuery.trim() && !hasNavigated) {
+          if (onClose) onClose();
+          return;
+        }
         if (isBookmarkMode) {
           const bookmark = bookmarkResults[selectedIndex];
           if (bookmark) openBookmark(bookmark);
@@ -551,28 +566,32 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
             if (keyword) executeCommand(activeCommand!.command.key, keyword);
           }
         } else if (isSuggestingCommands) {
-          if (commandSuggestions.length > 0) selectCommand(commandSuggestions[selectedIndex]);
+          const cmd = commandSuggestions[selectedIndex] ?? commandSuggestions[0];
+          if (cmd) selectCommand(cmd);
         } else if (filteredTabs[selectedIndex]) {
           const tab = filteredTabs[selectedIndex];
-          if (onClose) onClose();
+          // Send message before onClose — in popup mode, window.close() kills the JS context
+          // before async messages fire if called first.
           if (tab.source === "recent") {
             broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
           } else {
             broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
           }
+          if (onClose) onClose();
         }
         break;
       case " ":
         if (isSuggestingCommands && commandSuggestions.length > 0) {
           e.preventDefault();
-          selectCommand(commandSuggestions[selectedIndex]);
+          const cmd = commandSuggestions[selectedIndex] ?? commandSuggestions[0];
+          if (cmd) selectCommand(cmd);
         }
         break;
     }
     e.stopPropagation();
   };
 
-  const mode = isCommandMode ? "command" : isSuggestingCommands ? "suggest" : "normal";
+  const mode = isBookmarkMode ? "bookmark" : isCommandMode ? "command" : isSuggestingCommands ? "suggest" : "normal";
 
   return (
     <div id="tabaru-content">
@@ -584,7 +603,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
           className={`search-input${isCommandMode ? " command-active" : ""}`}
           placeholder="Search tabs, or type ! for commands..."
           value={searchQuery}
-          onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+          onInput={(e) => { setSearchQuery((e.target as HTMLInputElement).value); setHasNavigated(false); }}
           onKeyDown={handleKeyDown}
         />
         <button className="close-button" onClick={() => onClose && onClose()}>×</button>
@@ -614,14 +633,16 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
                 <li
                   key={cmd.key}
                   onClick={() => selectCommand(cmd)}
-                  className={`tab-item command-suggestion-item ${index === selectedIndex ? "selected" : ""}`}
+                  className={`tab-item${index === selectedIndex ? " selected" : ""}`}
                 >
-                  <div className="command-panel-icon" style={{ marginRight: '8px', background: 'rgba(168, 130, 255, 0.15)', color: 'rgba(168, 130, 255, 0.9)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="command-panel-icon">
                     <CommandIcon />
                   </div>
                   <div className="tab-info">
+                    <span className="tab-title">{cmd.label}</span>
                     <span className="tab-url">{cmd.description}</span>
                   </div>
+                  <kbd className="cmd-shortcut-badge">!{cmd.key}</kbd>
                 </li>
               ))}
             </ul>
@@ -638,12 +659,12 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
                     <li
                       key={tab.resultId}
                       onClick={() => {
-                        if (onClose) onClose();
                         if (tab.source === "recent") {
                           broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
                         } else {
                           broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
                         }
+                        if (onClose) onClose();
                       }}
                       className={[
                         "tab-item",

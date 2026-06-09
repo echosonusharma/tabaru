@@ -460,7 +460,17 @@ async function ensureManagedGroupForRule(
   return groupId;
 }
 
-export async function applyTabGroupRules(tab: browser.Tabs.Tab): Promise<void> {
+// Serializes all tab-group write operations so concurrent onCreated/onStartup
+// events never race on a simultaneous read-modify-write of managedTabGroupsStore.
+let _tabGroupOpQueue: Promise<unknown> = Promise.resolve();
+
+function runWithTabGroupLock<T>(fn: () => Promise<T>): Promise<T> {
+  const next = _tabGroupOpQueue.catch(() => {}).then(() => fn());
+  _tabGroupOpQueue = next.catch(() => {});
+  return next;
+}
+
+async function applyTabGroupRulesImpl(tab: browser.Tabs.Tab): Promise<void> {
   if (!tab.id || !tab.url || !tab.windowId) return;
 
   try {
@@ -494,7 +504,11 @@ export async function applyTabGroupRules(tab: browser.Tabs.Tab): Promise<void> {
   }
 }
 
-export async function applyTabGroupRulesToAllTabs(): Promise<void> {
+export function applyTabGroupRules(tab: browser.Tabs.Tab): Promise<void> {
+  return runWithTabGroupLock(() => applyTabGroupRulesImpl(tab));
+}
+
+async function applyTabGroupRulesToAllTabsImpl(): Promise<void> {
   try {
     const [allTabs, existingManagedGroups, rawRules] = await Promise.all([
       browser.tabs.query({}),
@@ -573,7 +587,11 @@ export async function applyTabGroupRulesToAllTabs(): Promise<void> {
   }
 }
 
-export async function groupTabsForRuleNow(ruleId: string): Promise<boolean> {
+export function applyTabGroupRulesToAllTabs(): Promise<void> {
+  return runWithTabGroupLock(() => applyTabGroupRulesToAllTabsImpl());
+}
+
+async function groupTabsForRuleNowImpl(ruleId: string): Promise<boolean> {
   try {
     const [allTabs, rawRules, existingManagedGroups] = await Promise.all([
       browser.tabs.query({}),
@@ -655,4 +673,8 @@ export async function groupTabsForRuleNow(ruleId: string): Promise<boolean> {
     logger("Error grouping tabs for rule now:", error);
     return false;
   }
+}
+
+export function groupTabsForRuleNow(ruleId: string): Promise<boolean> {
+  return runWithTabGroupLock(() => groupTabsForRuleNowImpl(ruleId));
 }

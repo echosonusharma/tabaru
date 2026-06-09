@@ -5,14 +5,18 @@
 <h1 align="center">Tabaru</h1>
 
 <p align="center">
-  <b>Tabaru</b> is a lightweight browser extension for efficient tab management. It provides quick navigation and fuzzy search capabilities to help manage multiple open tabs.
+  <b>Tabaru</b> is a lightweight browser extension for efficient tab management. Quick navigation, fuzzy search, bookmarks, and auto tab groups — all keyboard-driven.
 </p>
 
 ## Features
 
 - Fast tab switching and navigation.
-- Fuzzy search for locating specific tabs across windows.
-- Keyboard-centric interface.
+- Fuzzy search across all open tabs and windows.
+- Bookmark search via `!b` command.
+- Web search via `!s` command.
+- Auto tab grouping with pattern-based rules.
+- Keyboard-centric interface with command mode.
+- Theme selector (Tabaru, Forest, Mocha, Midnight).
 - Cross-browser support (Chrome, Firefox, Edge, Opera).
 
 > **Compatibility Note:** Tabaru is most suitable for Chromium-based browsers (Chrome, Edge, Brave, Opera). While Firefox is supported, you may encounter minor issues.

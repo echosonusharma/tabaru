@@ -24,9 +24,14 @@ import {
   incrementSearchPopupConnections,
   decrementSearchPopupConnections,
   handleSearchCmd,
-  getDirTitle,
-  bookmarksStore
 } from "./features/search_navigation";
+
+// Serializes all tabsStore read-modify-write operations so concurrent tab events
+// (e.g. many tabs restored at startup) never race and corrupt the tab ID array.
+let _tabStoreOpQueue: Promise<void> = Promise.resolve();
+function withTabStoreLock(fn: () => Promise<void>): void {
+  _tabStoreOpQueue = _tabStoreOpQueue.catch(() => {}).then(fn);
+}
 
 // Runtime Events
 
@@ -120,6 +125,12 @@ browser.runtime.onMessage.addListener(
       case "groupTabsByRule":
         return await groupTabsForRuleNow(msg.data.ruleId);
 
+      case "getOpenAndCloseShortcut": {
+        const cmds = await browser.commands.getAll();
+        const cmd = cmds.find((c) => c.name === "open_and_close_search");
+        return cmd?.shortcut ?? null;
+      }
+
       default:
         return undefined;
     }
@@ -142,6 +153,7 @@ browser.windows.onFocusChanged.addListener(async (windowId: number) => {
         await browser.tabs.sendMessage(prevActiveTabs[0].id, { action: "closeSearchTab" });
       }
     } catch {
+      // expected: tab may not have content script loaded
     }
   }
 });
@@ -177,59 +189,50 @@ browser.idle.onStateChanged.addListener(async (newState: browser.Idle.IdleState)
   }
 });
 
-browser.tabs.onCreated.addListener(async (tab: browser.Tabs.Tab) => {
-  try {
-    if (!tab.windowId || !tab.id) {
-      return;
-    }
-
-    const tabsData = (await tabsStore.get()) as TabData;
-
-    if (!tabsData[tab.windowId]) {
-      tabsData[tab.windowId] = [];
-    }
-
-    tabsData[tab.windowId].splice(tab.index, 0, tab.id);
-    await tabsStore.set(tabsData);
-
-    if (tab.url) {
-      await applyTabGroupRules(tab);
-    }
-  } catch (error) {
-    logger(`Error in onCreated tab:`, error);
-  }
-});
-
-browser.tabs.onMoved.addListener(async (tabId: number, moveInfo: browser.Tabs.OnMovedMoveInfoType) => {
-  try {
-    const tabsData = (await tabsStore.get()) as TabData;
-    const windowTabIds = tabsData[moveInfo.windowId];
-
-    if (!windowTabIds) return;
-
-    const tabIndex = windowTabIds.findIndex((id) => id === tabId);
-    if (tabIndex === -1) return;
-
-    const [movedTabId] = windowTabIds.splice(tabIndex, 1);
-    windowTabIds.splice(moveInfo.toIndex, 0, movedTabId);
-
-    await tabsStore.set(tabsData);
-  } catch (error) {
-    logger(`Error in onMoved tab:`, error);
-  }
-});
-
-browser.tabs.onRemoved.addListener(async (tabId: number, removeInfo: browser.Tabs.OnRemovedRemoveInfoType) => {
-  try {
-    const tabsData = (await tabsStore.get()) as TabData;
-
-    if (tabsData[removeInfo.windowId]) {
-      tabsData[removeInfo.windowId] = tabsData[removeInfo.windowId].filter((id) => id !== tabId);
+browser.tabs.onCreated.addListener((tab: browser.Tabs.Tab) => {
+  if (!tab.windowId || !tab.id) return;
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      if (!tabsData[tab.windowId!]) tabsData[tab.windowId!] = [];
+      tabsData[tab.windowId!].splice(tab.index, 0, tab.id!);
       await tabsStore.set(tabsData);
+    } catch (error) {
+      logger(`Error in onCreated tab:`, error);
     }
-  } catch (error) {
-    logger(`Error in onRemoved tab:`, error);
-  }
+  });
+  if (tab.url) applyTabGroupRules(tab).catch((e) => logger("Error applying tab group rules on create:", e));
+});
+
+browser.tabs.onMoved.addListener((tabId: number, moveInfo: browser.Tabs.OnMovedMoveInfoType) => {
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      const windowTabIds = tabsData[moveInfo.windowId];
+      if (!windowTabIds) return;
+      const tabIndex = windowTabIds.findIndex((id) => id === tabId);
+      if (tabIndex === -1) return;
+      const [movedTabId] = windowTabIds.splice(tabIndex, 1);
+      windowTabIds.splice(moveInfo.toIndex, 0, movedTabId);
+      await tabsStore.set(tabsData);
+    } catch (error) {
+      logger(`Error in onMoved tab:`, error);
+    }
+  });
+});
+
+browser.tabs.onRemoved.addListener((tabId: number, removeInfo: browser.Tabs.OnRemovedRemoveInfoType) => {
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      if (tabsData[removeInfo.windowId]) {
+        tabsData[removeInfo.windowId] = tabsData[removeInfo.windowId].filter((id) => id !== tabId);
+        await tabsStore.set(tabsData);
+      }
+    } catch (error) {
+      logger(`Error in onRemoved tab:`, error);
+    }
+  });
 });
 
 browser.tabs.onActivated.addListener(async (activeInfo: browser.Tabs.OnActivatedActiveInfoType) => {
@@ -241,6 +244,7 @@ browser.tabs.onActivated.addListener(async (activeInfo: browser.Tabs.OnActivated
     try {
       await browser.tabs.sendMessage(previousTabId, { action: "closeSearchTab" });
     } catch {
+      // expected: tab may not have content script loaded
     }
   }
 });
@@ -297,19 +301,27 @@ async function handleTabMoveCmd(
   activeWindowId: number
 ): Promise<void> {
   try {
-    const windowTabIds = tabIdsData[activeWindowId];
+    let windowTabIds = tabIdsData[activeWindowId];
+    let currentTabIndex = windowTabIds?.findIndex((id) => id === activeTabId) ?? -1;
 
-    if (!windowTabIds || windowTabIds.length <= 1) {
-      return;
-    }
-
-    const currentTabIndex = windowTabIds.findIndex((id) => id === activeTabId);
     if (currentTabIndex === -1) {
-      return;
+      // Store is stale — rebuild from live browser state and retry
+      const realTabs = await browser.tabs.query({ windowId: activeWindowId });
+      realTabs.sort((a, b) => a.index - b.index);
+      windowTabIds = realTabs.map((t) => t.id!).filter((id) => id !== undefined);
+      currentTabIndex = windowTabIds.findIndex((id) => id === activeTabId);
+      if (currentTabIndex === -1) return;
+      // Repair the store while we're here
+      withTabStoreLock(async () => {
+        const fresh: TabData = (await tabsStore.get()) ?? {};
+        fresh[activeWindowId] = windowTabIds!;
+        await tabsStore.set(fresh);
+      });
     }
+
+    if (windowTabIds.length <= 1) return;
 
     const newIndex = (currentTabIndex + direction + windowTabIds.length) % windowTabIds.length;
-
     await browser.tabs.update(windowTabIds[newIndex], { active: true });
   } catch (error) {
     logger(`Error in handleTabMoveCmd:`, error);
@@ -342,28 +354,8 @@ async function handleWindowMoveCmd(
 
 // Bookmarks Listeners
 
-browser.bookmarks.onCreated.addListener(async (id, bookmark) => {
-  try {
-    if (!bookmark.url) {
-      return;
-    }
-    await wasmReadyPromise;
-    const items = (await bookmarksStore.get()) ?? [];
-    items.push({
-      id,
-      title: bookmark.title || "",
-      url: bookmark.url,
-      favIconUrl: `${browser.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(bookmark.url)}&size=32`,
-      keywords: [], // Rebuild logic might be better but this is fine for now
-      parentId: bookmark.parentId,
-      parentTitle: await getDirTitle(bookmark.parentId),
-      dateAdded: bookmark.dateAdded,
-    });
-    // Actually, it's better to just rebuild the whole index or update the specific item correctly
-    await rebuildBookmarksIndex();
-  } catch (error) {
-    logger("Error in bookmarks.onCreated:", error);
-  }
+browser.bookmarks.onCreated.addListener(async () => {
+  await rebuildBookmarksIndex();
 });
 
 browser.bookmarks.onRemoved.addListener(async () => {
