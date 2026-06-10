@@ -32,7 +32,8 @@ export type ExtensionMessage =
   | { action: "openBookmark"; data: { url: string } }
   | { action: "groupTabsByRule"; data: { ruleId: string } }
   | { action: "getOpenAndCloseShortcut" }
-  | { action: "closePopup" };
+  | { action: "closePopup" }
+  | { action: "fetchWeather"; data: { provider: 'open-meteo' | 'wttr'; city: string; unit: 'C' | 'F' } };
 
 export enum StoreType {
   LOCAL = "local",

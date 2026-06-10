@@ -5,7 +5,7 @@
   "author": "Sonu Sharma",
   "manifest_version": 3,
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src *;"
   },
   "__chrome|edge|opera__permissions": [
     "storage",
@@ -32,6 +32,9 @@
   "host_permissions": [
     "<all_urls>"
   ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
   "action": {
     "default_icon": {
       "16": "images/icon-16.png",

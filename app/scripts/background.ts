@@ -131,6 +131,15 @@ browser.runtime.onMessage.addListener(
         return cmd?.shortcut ?? null;
       }
 
+      case "fetchWeather": {
+        try {
+          return await handleFetchWeather(msg.data.provider, msg.data.city, msg.data.unit);
+        } catch (e) {
+          logger('fetchWeather failed:', e);
+          return { error: String(e) };
+        }
+      }
+
       default:
         return undefined;
     }
@@ -369,3 +378,74 @@ browser.bookmarks.onChanged.addListener(async () => {
 browser.bookmarks.onMoved.addListener(async () => {
   await rebuildBookmarksIndex();
 });
+
+// ─── Weather proxy (background bypasses CORS) ────────────────────────────────
+
+const WEATHER_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+async function handleFetchWeather(
+  provider: 'open-meteo' | 'wttr',
+  city: string,
+  unit: 'C' | 'F',
+): Promise<unknown> {
+  const cacheKey = `weather_cache:${provider}:${city.trim().toLowerCase()}:${unit}`;
+  const stored = await browser.storage.local.get(cacheKey);
+  const cached = stored[cacheKey] as { data: unknown; ts: number } | undefined;
+  if (cached && Date.now() - cached.ts < WEATHER_CACHE_TTL) {
+    return cached.data;
+  }
+
+  if (provider === 'wttr') {
+    const url = city.trim()
+      ? `https://wttr.in/${encodeURIComponent(city.trim())}?format=j1`
+      : `https://wttr.in/?format=j1`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('wttr fetch failed');
+    const data = await res.json();
+    const cond = data.current_condition?.[0];
+    const area = data.nearest_area?.[0];
+    if (!cond || !area) throw new Error('bad wttr response');
+    const result = {
+      city: area.areaName?.[0]?.value ?? city,
+      temp: Number(unit === 'F' ? cond.temp_F : cond.temp_C),
+      feelsLike: Number(unit === 'F' ? cond.FeelsLikeF : cond.FeelsLikeC),
+      humidity: Number(cond.humidity),
+      weatherCode: Number(cond.weatherCode),
+    };
+    await browser.storage.local.set({ [cacheKey]: { data: result, ts: Date.now() } });
+    return result;
+  }
+
+  // Open-Meteo
+  let lat: number, lon: number, cityName: string;
+  if (city.trim()) {
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=1&language=en&format=json`
+    );
+    const geoData = await geoRes.json();
+    const r = geoData.results?.[0];
+    if (!r) throw new Error('City not found');
+    lat = r.latitude; lon = r.longitude; cityName = r.name;
+  } else {
+    const ipRes = await fetch('https://ipinfo.io/json');
+    const ipData = await ipRes.json();
+    if (!ipData.loc) throw new Error('IP geolocation failed');
+    [lat, lon] = ipData.loc.split(',').map(Number);
+    cityName = ipData.city ?? 'Unknown';
+  }
+  const unitParam = unit === 'F' ? 'fahrenheit' : 'celsius';
+  const wRes = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code&temperature_unit=${unitParam}`
+  );
+  const wData = await wRes.json();
+  const c = wData.current;
+  const result = {
+    city: cityName,
+    temp: Math.round(c.temperature_2m),
+    feelsLike: Math.round(c.apparent_temperature),
+    humidity: c.relative_humidity_2m,
+    weatherCode: c.weather_code,
+  };
+  await browser.storage.local.set({ [cacheKey]: { data: result, ts: Date.now() } });
+  return result;
+}

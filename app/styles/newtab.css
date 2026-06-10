@@ -1,0 +1,208 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+.nt-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d1117;
+}
+
+.nt-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.nt-background-img {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.nt-background-img.nt-bg-loaded {
+  opacity: 1;
+}
+
+.nt-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.nt-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.nt-widget-wrap {
+  transform-origin: center top;
+  transition: transform 0.2s ease;
+}
+
+.nt-greeting {
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.01em;
+  margin-bottom: 16px;
+  opacity: 0.92;
+}
+
+.nt-clock {
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
+}
+
+.nt-time {
+  font-size: 72px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.nt-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  margin: 10px 0;
+}
+
+.nt-search-host {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.nt-date {
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0.95;
+  letter-spacing: 0.01em;
+}
+
+.nt-weather {
+  margin-top: 20px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
+}
+
+.nt-weather-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.nt-weather-city {
+  text-transform: lowercase;
+  opacity: 0.9;
+}
+
+.nt-weather-icon {
+  font-size: 20px;
+}
+
+.nt-weather-temp {
+  font-weight: 700;
+}
+
+.nt-weather-details {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.nt-weather-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.nt-weather-val {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.nt-weather-label {
+  font-size: 12px;
+  opacity: 0.7;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.nt-weather-error {
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.nt-nav-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(4px);
+  border-radius: 999px;
+  padding: 6px 10px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.nt-page:hover .nt-nav-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nt-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nt-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}

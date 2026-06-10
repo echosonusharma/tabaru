@@ -30,7 +30,7 @@ export function GeneralSection() {
     await searchTabStore.set(next);
   };
 
-  const handleThemeChange = async (id: ThemeId) => {
+const handleThemeChange = async (id: ThemeId) => {
     setCurrentTheme(id);
     const theme = getTheme(id);
     applyRootTheme(theme);
@@ -81,6 +81,7 @@ export function GeneralSection() {
             <span class="toggle-slider"></span>
           </label>
         </div>
+
       </div>
     </Fragment>
   );

@@ -4,9 +4,10 @@ import browser from 'webextension-polyfill';
 import { ShortcutsIcon, ShortcutsSection } from "./features/shortcuts";
 import { TabGroupsIcon, TabGroupsSection } from "./features/auto_tab_group";
 import { GeneralSection } from "./features/search_navigation";
+import { NewTabIcon, NewTabSection } from "./features/new_tab";
 import '../styles/settings.css';
 
-type SectionId = 'general' | 'shortcuts' | 'tab-groups' | 'about';
+type SectionId = 'general' | 'shortcuts' | 'tab-groups' | 'new-tab' | 'about';
 
 const GeneralIcon = () => (
   <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -27,6 +28,7 @@ const NAV_SECTIONS: { id: SectionId; label: string; Icon: () => VNode }[] = [
   { id: 'general', label: 'General', Icon: GeneralIcon },
   { id: 'shortcuts', label: 'Shortcuts', Icon: ShortcutsIcon },
   { id: 'tab-groups', label: 'Tab Groups', Icon: TabGroupsIcon },
+  { id: 'new-tab', label: 'New Tab', Icon: NewTabIcon },
   { id: 'about', label: 'About', Icon: AboutIcon },
 ];
 
@@ -66,7 +68,7 @@ function SettingsApp() {
 
   useEffect(() => {
     window.location.hash = active;
-    document.title = `Tabaru — ${NAV_SECTIONS.find((s) => s.id === active)?.label}`;
+    document.title = `Tabaru - ${NAV_SECTIONS.find((s) => s.id === active)?.label}`;
   }, [active]);
 
   const manifest = browser.runtime.getManifest();
@@ -95,6 +97,7 @@ function SettingsApp() {
         {active === 'general' && <GeneralSection />}
         {active === 'shortcuts' && <ShortcutsSection />}
         {active === 'tab-groups' && <TabGroupsSection />}
+        {active === 'new-tab' && <NewTabSection />}
         {active === 'about' && <AboutSection />}
       </main>
     </div>
