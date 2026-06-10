@@ -24,10 +24,12 @@ const AboutIcon = () => (
 );
 
 
+const IS_FIREFOX = navigator.userAgent.toLowerCase().includes('firefox');
+
 const NAV_SECTIONS: { id: SectionId; label: string; Icon: () => VNode }[] = [
   { id: 'general', label: 'General', Icon: GeneralIcon },
   { id: 'shortcuts', label: 'Shortcuts', Icon: ShortcutsIcon },
-  { id: 'tab-groups', label: 'Tab Groups', Icon: TabGroupsIcon },
+  ...(!IS_FIREFOX ? [{ id: 'tab-groups' as SectionId, label: 'Tab Groups', Icon: TabGroupsIcon }] : []),
   { id: 'new-tab', label: 'New Tab', Icon: NewTabIcon },
   { id: 'about', label: 'About', Icon: AboutIcon },
 ];

@@ -163,18 +163,23 @@ export async function handleSearch(keyword: string): Promise<boolean> {
     const url = keyword.startsWith("http") ? keyword : `https://${keyword}`;
     await browser.tabs.create({ url });
   } else {
-    await browser.search.query({
-      text: keyword,
-      disposition: "NEW_TAB",
-    });
+    const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+    if (isFirefox) {
+      const tab = await browser.tabs.create({});
+      if (tab.id !== undefined) {
+        await browser.search.query({ text: keyword, tabId: tab.id });
+      }
+    } else {
+      await browser.search.query({ text: keyword, disposition: "NEW_TAB" });
+    }
   }
   return true;
 }
 
-async function openPopupFallback(activeWindowId: number): Promise<void> {
+async function openPopupFallback(_activeWindowId: number): Promise<void> {
   try {
     await browser.action.setPopup({ popup: "popup.html" });
-    await browser.action.openPopup({ windowId: activeWindowId });
+    await browser.action.openPopup();
   } catch (fallbackError) {
     logger(`Failed to open fallback popup:`, fallbackError);
     await browser.action.setPopup({ popup: "" });

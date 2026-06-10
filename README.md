@@ -10,16 +10,30 @@
 
 ## Features
 
-- Fast tab switching and navigation.
-- Fuzzy search across all open tabs and windows.
-- Bookmark search via `!b` command.
-- Web search via `!s` command.
-- Auto tab grouping with pattern-based rules.
-- Keyboard-centric interface with command mode.
-- Theme selector (Tabaru, Forest, Mocha, Midnight).
-- Cross-browser support (Chrome, Firefox, Edge, Opera).
+**Tab Search & Navigation**
+- Fuzzy search across all open tabs, windows, and recently closed tabs.
+- Switch to any tab or restore recently closed tabs from the search overlay.
+- Cycle through tabs and windows with keyboard shortcuts.
+- Kill the current tab with a shortcut.
 
-> **Compatibility Note:** Tabaru is most suitable for Chromium-based browsers (Chrome, Edge, Brave, Opera). While Firefox is supported, you may encounter minor issues.
+**Commands** (type `!` to trigger)
+- `!s <query>` — web search or navigate to a domain.
+- `!b <query>` — fuzzy search bookmarks, grouped by folder.
+
+**Auto Tab Groups** *(Chrome / Edge / Opera only)*
+- URL pattern rules (e.g. `https://*.github.com/*`) auto-group matching tabs.
+- Configurable group title, color, and collapsed state per rule.
+
+**New Tab Page**
+- Wallpaper providers: solid color, gradient, or random photo (Picsum).
+- Widgets: clock (12h/24h), greeting, weather, quick access links.
+- Weather from Open-Meteo or wttr.in with animated weather effects.
+
+**General**
+- Theme selector (Tabaru, Forest, Mocha, Midnight).
+- Inline content-script overlay — no popup required.
+- Cross-browser: Chrome, Firefox, Edge, Opera.
+
 
 
 ## Suggested Keyboard Shortcuts
