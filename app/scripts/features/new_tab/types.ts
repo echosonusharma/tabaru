@@ -29,6 +29,8 @@ export interface WeatherWidgetConfig {
   unit: 'C' | 'F';
   showFeelsLike: boolean;
   showHumidity: boolean;
+  enableEffects: boolean;
+  effectOverride: EffectId | 'auto';
 }
 
 export type WidgetConfig = GreetingWidgetConfig | ClockWidgetConfig | WeatherWidgetConfig;
@@ -43,6 +45,8 @@ export interface PicsumSettings {
   grayscale: boolean;
   refreshInterval: number;
 }
+
+export type EffectId = 'none' | 'rain' | 'storm' | 'snow' | 'fog' | 'stars';
 
 export interface NewTabSettings {
   activeProvider: WallpaperProviderId;

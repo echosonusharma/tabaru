@@ -7,9 +7,10 @@ import { ClockWidget } from './widgets/clock';
 import { GreetingWidget } from './widgets/greeting';
 import { WeatherWidget } from './widgets/weather';
 import { PicsumBackground } from './providers/picsum';
+import { EffectsCanvas } from './effects';
 import type {
   NewTabSettings, WallpaperProviderId,
-  WidgetConfig, WidgetType,
+  WidgetConfig, WidgetType, EffectId,
   GreetingWidgetConfig, ClockWidgetConfig, WeatherWidgetConfig,
 } from './types';
 
@@ -32,7 +33,7 @@ const ALL_WIDGET_TYPES: WidgetType[] = ['greeting', 'clock', 'weather'];
 function defaultWidget(type: WidgetType): WidgetConfig {
   if (type === 'greeting') return { id: 'greeting', type: 'greeting', size: 3, name: '' };
   if (type === 'clock') return { id: 'clock', type: 'clock', size: 3, showTime: true, showDate: true, format: '24h' };
-  return { id: 'weather', type: 'weather', size: 3, provider: 'open-meteo', city: '', unit: 'C', showFeelsLike: true, showHumidity: true };
+  return { id: 'weather', type: 'weather', size: 3, provider: 'open-meteo', city: '', unit: 'C', showFeelsLike: true, showHumidity: true, enableEffects: false, effectOverride: 'auto' };
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -61,6 +62,7 @@ export function NewTabPage() {
   const [settings, setSettings] = useState<NewTabSettings | null>(null);
   const [navOffset, setNavOffset] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [weatherEffect, setWeatherEffect] = useState<EffectId>('none');
 
   useEffect(() => {
     getNewTabSettings().then(setSettings);
@@ -73,7 +75,10 @@ export function NewTabPage() {
     ) => {
       if (area !== 'local' || !changes['new_tab_settings']) return;
       const val = changes['new_tab_settings'].newValue as NewTabSettings | undefined;
-      setSettings({ ...DEFAULT_NEW_TAB_SETTINGS, ...(val ?? {}), widgets: val?.widgets ?? DEFAULT_NEW_TAB_SETTINGS.widgets });
+      const next = { ...DEFAULT_NEW_TAB_SETTINGS, ...(val ?? {}), widgets: val?.widgets ?? DEFAULT_NEW_TAB_SETTINGS.widgets };
+      setSettings(next);
+      const weatherWidget = next.widgets.find(w => w.type === 'weather') as WeatherWidgetConfig | undefined;
+      if (!weatherWidget?.enableEffects) setWeatherEffect('none');
     };
     browser.storage.onChanged.addListener(handler);
     return () => browser.storage.onChanged.removeListener(handler);
@@ -92,6 +97,7 @@ export function NewTabPage() {
         : provider && <provider.BackgroundComponent settings={providerSettings} />
       }
       <div class="nt-overlay" />
+      <EffectsCanvas effect={weatherEffect} />
       <div class="nt-content">
         {settings.widgets.map((widget) => (
           <div
@@ -101,7 +107,12 @@ export function NewTabPage() {
           >
             {widget.type === 'greeting' && <GreetingWidget config={widget} />}
             {widget.type === 'clock' && <ClockWidget config={widget} />}
-            {widget.type === 'weather' && <WeatherWidget config={widget} />}
+            {widget.type === 'weather' && (
+              <WeatherWidget
+                config={widget}
+                onEffectChange={setWeatherEffect}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -215,6 +226,30 @@ function WeatherWidgetSettings({ config, onChange }: { config: WeatherWidgetConf
           <span class="toggle-slider" />
         </label>
       </div>
+      <div class="settings-row">
+        <div class="settings-row-text">
+          <span class="settings-row-label">Weather effects</span>
+          <span class="settings-row-desc">Show shader effects based on current weather</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" checked={config.enableEffects}
+            onChange={(e) => onChange({ ...config, enableEffects: (e.target as HTMLInputElement).checked, effectOverride: 'auto' })} />
+          <span class="toggle-slider" />
+        </label>
+      </div>
+      {config.enableEffects && (
+        <div class="nt-effect-picker">
+          {(['auto', 'rain', 'storm', 'snow', 'fog', 'stars'] as const).map((e) => (
+            <button
+              key={e}
+              class={`nt-effect-btn${config.effectOverride === e ? ' active' : ''}`}
+              onClick={() => onChange({ ...config, effectOverride: e })}
+            >
+              {e === 'auto' ? 'Auto' : e === 'rain' ? 'Rain' : e === 'storm' ? 'Storm' : e === 'snow' ? 'Snow' : e === 'fog' ? 'Fog' : 'Stars'}
+            </button>
+          ))}
+        </div>
+      )}
     </Fragment>
   );
 }
@@ -406,6 +441,7 @@ export function NewTabSection() {
           )}
         </div>
       </div>
+
     </Fragment>
   );
 }

@@ -383,6 +383,61 @@ browser.bookmarks.onMoved.addListener(async () => {
 
 const WEATHER_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
+// wttr.in uses its own code set; map to WMO equivalents used by open-meteo.
+function wttrCodeToWmo(code: number): number {
+  const map: Record<number, number> = {
+    113: 0,   // Sunny/Clear
+    116: 2,   // Partly cloudy
+    119: 3,   // Cloudy
+    122: 3,   // Overcast
+    143: 45,  // Mist
+    176: 80,  // Patchy rain
+    179: 85,  // Patchy snow
+    182: 68,  // Patchy sleet
+    185: 66,  // Patchy freezing drizzle
+    200: 95,  // Thundery outbreaks
+    227: 71,  // Blowing snow
+    230: 75,  // Blizzard
+    248: 45,  // Fog
+    260: 48,  // Freezing fog
+    263: 51,  // Light drizzle
+    266: 53,  // Moderate drizzle
+    281: 56,  // Freezing drizzle
+    284: 57,  // Heavy freezing drizzle
+    293: 61,  // Patchy light rain
+    296: 61,  // Light rain
+    299: 63,  // Moderate rain
+    302: 65,  // Heavy rain
+    305: 63,  // Heavy rain at times
+    308: 65,  // Torrential rain
+    311: 68,  // Light sleet
+    314: 67,  // Heavy sleet
+    317: 68,  // Light sleet showers
+    320: 67,  // Heavy sleet showers
+    323: 71,  // Patchy light snow
+    326: 71,  // Light snow
+    329: 73,  // Patchy moderate snow
+    332: 73,  // Moderate snow
+    335: 75,  // Patchy heavy snow
+    338: 75,  // Heavy snow
+    350: 77,  // Ice pellets
+    353: 80,  // Light rain shower
+    356: 81,  // Moderate/heavy rain shower
+    359: 82,  // Torrential rain shower
+    362: 68,  // Light sleet shower
+    365: 67,  // Heavy sleet shower
+    368: 85,  // Light snow shower
+    371: 86,  // Heavy snow shower
+    374: 77,  // Light ice pellet shower
+    377: 77,  // Heavy ice pellet shower
+    386: 95,  // Light rain with thunder
+    389: 95,  // Heavy rain with thunder
+    392: 95,  // Light snow with thunder
+    395: 99,  // Heavy snow with thunder
+  };
+  return map[code] ?? 0;
+}
+
 async function handleFetchWeather(
   provider: 'open-meteo' | 'wttr',
   city: string,
@@ -400,7 +455,7 @@ async function handleFetchWeather(
       ? `https://wttr.in/${encodeURIComponent(city.trim())}?format=j1`
       : `https://wttr.in/?format=j1`;
     const res = await fetch(url);
-    if (!res.ok) throw new Error('wttr fetch failed');
+    if (!res.ok) throw new Error(`wttr fetch failed: ${res.status}`);
     const data = await res.json();
     const cond = data.current_condition?.[0];
     const area = data.nearest_area?.[0];
@@ -410,7 +465,7 @@ async function handleFetchWeather(
       temp: Number(unit === 'F' ? cond.temp_F : cond.temp_C),
       feelsLike: Number(unit === 'F' ? cond.FeelsLikeF : cond.FeelsLikeC),
       humidity: Number(cond.humidity),
-      weatherCode: Number(cond.weatherCode),
+      weatherCode: wttrCodeToWmo(Number(cond.weatherCode)),
     };
     await browser.storage.local.set({ [cacheKey]: { data: result, ts: Date.now() } });
     return result;
@@ -422,14 +477,16 @@ async function handleFetchWeather(
     const geoRes = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=1&language=en&format=json`
     );
+    if (!geoRes.ok) throw new Error(`Geocoding failed: ${geoRes.status}`);
     const geoData = await geoRes.json();
     const r = geoData.results?.[0];
     if (!r) throw new Error('City not found');
     lat = r.latitude; lon = r.longitude; cityName = r.name;
   } else {
     const ipRes = await fetch('https://ipinfo.io/json');
+    if (!ipRes.ok) throw new Error(`IP geolocation failed: ${ipRes.status}`);
     const ipData = await ipRes.json();
-    if (!ipData.loc) throw new Error('IP geolocation failed');
+    if (!ipData.loc) throw new Error('IP geolocation missing loc');
     [lat, lon] = ipData.loc.split(',').map(Number);
     cityName = ipData.city ?? 'Unknown';
   }
@@ -437,6 +494,7 @@ async function handleFetchWeather(
   const wRes = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code&temperature_unit=${unitParam}`
   );
+  if (!wRes.ok) throw new Error(`Weather fetch failed: ${wRes.status}`);
   const wData = await wRes.json();
   const c = wData.current;
   const result = {

@@ -2,6 +2,10 @@ import { h } from 'preact';
 import { useState, useEffect, useRef } from 'preact/hooks';
 import type { PicsumSettings } from '../types';
 
+// Unique per page-load — ensures "every new tab" mode gets a fresh random image
+// instead of hitting the browser cache for the same bare URL.
+const SESSION_SEED = `s${Date.now()}`;
+
 function buildUrl(settings: PicsumSettings, navOffset: number, frozenBucket: number | null): string {
   const baseSeed = settings.seed.trim();
   let bucket: number;
@@ -19,7 +23,8 @@ function buildUrl(settings: PicsumSettings, navOffset: number, frozenBucket: num
     : `r-${bucket}`;
 
   if (!hasSeed) {
-    const url = `https://picsum.photos/1920/1080`;
+    // Use session seed so each new tab gets a different image (no browser cache hit).
+    const url = `https://picsum.photos/seed/${SESSION_SEED}/1920/1080`;
     const params: string[] = [];
     if (settings.blur > 0) params.push(`blur=${settings.blur}`);
     if (settings.grayscale) params.push('grayscale');

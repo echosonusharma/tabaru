@@ -17,5 +17,11 @@ export const newTabSettingsStore = new Store<NewTabSettings>('new_tab_settings',
 export async function getNewTabSettings(): Promise<NewTabSettings> {
   const stored = await newTabSettingsStore.get();
   if (!stored) return DEFAULT_NEW_TAB_SETTINGS;
-  return { ...DEFAULT_NEW_TAB_SETTINGS, ...stored, widgets: stored.widgets ?? DEFAULT_NEW_TAB_SETTINGS.widgets };
+  return {
+    ...DEFAULT_NEW_TAB_SETTINGS,
+    ...stored,
+    widgets: (stored.widgets ?? DEFAULT_NEW_TAB_SETTINGS.widgets).map((w: any) =>
+      w.type === 'weather' ? { effectOverride: 'auto', ...w } : w
+    ),
+  };
 }

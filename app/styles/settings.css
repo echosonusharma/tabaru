@@ -780,6 +780,43 @@ kbd.missing {
   text-align: center;
 }
 
+/* ── Effects picker ──────────────────────────────────────────────────────── */
+
+.nt-effect-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.nt-effect-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border-input);
+  background: transparent;
+  color: var(--color-fg);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.nt-effect-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nt-effect-btn.active {
+  background: rgba(var(--color-accent-rgb), 0.15);
+  border-color: rgba(var(--color-accent-rgb), 0.6);
+  color: var(--color-accent);
+}
+
+.nt-effect-hint {
+  font-size: 12px;
+  color: var(--color-bg-secondary);
+  margin: 8px 0 0;
+}
+
 /* ── Background panel ────────────────────────────────────────────────────── */
 
 .nt-bg-panel {

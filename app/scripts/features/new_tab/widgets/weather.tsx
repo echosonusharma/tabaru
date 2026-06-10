@@ -1,7 +1,18 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import browser from 'webextension-polyfill';
-import type { WeatherWidgetConfig } from '../types';
+import type { WeatherWidgetConfig, EffectId } from '../types';
+
+export function wmoToEffect(code: number): EffectId {
+  if (code === 0) return 'stars';             // clear sky
+  if (code <= 3)  return 'none';              // cloudy
+  if (code <= 48) return 'fog';               // fog / rime fog
+  if (code <= 67) return 'rain';              // drizzle + rain
+  if (code <= 77) return 'snow';              // snow fall + grains
+  if (code <= 82) return 'rain';              // rain showers
+  if (code <= 86) return 'snow';              // snow showers
+  return 'storm';                             // thunderstorm
+}
 
 interface WeatherData {
   city: string;
@@ -34,9 +45,20 @@ async function fetchWeather(config: WeatherWidgetConfig): Promise<WeatherData> {
   return result as WeatherData;
 }
 
-export function WeatherWidget({ config }: { config: WeatherWidgetConfig }) {
+export function WeatherWidget({ config, onEffectChange }: {
+  config: WeatherWidgetConfig;
+  onEffectChange?: (effect: EffectId) => void;
+}) {
   const [data, setData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const lastCodeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!config.enableEffects) { onEffectChange?.('none'); return; }
+    if (config.effectOverride !== 'auto') { onEffectChange?.(config.effectOverride); return; }
+    // auto + enableEffects toggled on — apply last fetched code if available
+    if (lastCodeRef.current !== null) onEffectChange?.(wmoToEffect(lastCodeRef.current));
+  }, [config.enableEffects, config.effectOverride]);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +66,15 @@ export function WeatherWidget({ config }: { config: WeatherWidgetConfig }) {
     setError(null);
 
     fetchWeather(config)
-      .then((d) => { if (!cancelled) setData(d); })
+      .then((d) => {
+        if (!cancelled) {
+          setData(d);
+          lastCodeRef.current = d.weatherCode;
+          if (config.enableEffects && config.effectOverride === 'auto') {
+            onEffectChange?.(wmoToEffect(d.weatherCode));
+          }
+        }
+      })
       .catch((e) => { if (!cancelled) setError(e?.message ?? 'unknown error'); });
 
     return () => { cancelled = true; };
