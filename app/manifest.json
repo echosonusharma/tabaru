@@ -17,7 +17,8 @@
     "idle",
     "search",
     "bookmarks",
-    "favicon"
+    "favicon",
+    "topSites"
   ],
   "__firefox__permissions": [
     "storage",
@@ -27,7 +28,8 @@
     "scripting",
     "idle",
     "search",
-    "bookmarks"
+    "bookmarks",
+    "topSites"
   ],
   "host_permissions": [
     "<all_urls>"

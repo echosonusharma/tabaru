@@ -6,12 +6,14 @@ import { WALLPAPER_PROVIDERS, getProvider } from './registry';
 import { ClockWidget } from './widgets/clock';
 import { GreetingWidget } from './widgets/greeting';
 import { WeatherWidget } from './widgets/weather';
+import { QuickAccessBar } from './widgets/quick_access';
 import { PicsumBackground } from './providers/picsum';
 import { EffectsCanvas } from './effects';
 import type {
   NewTabSettings, WallpaperProviderId,
   WidgetConfig, WidgetType, EffectId,
   GreetingWidgetConfig, ClockWidgetConfig, WeatherWidgetConfig,
+  QuickAccessWidgetConfig,
 } from './types';
 
 const SCALES = [0.65, 0.8, 1.0, 1.2, 1.5];
@@ -20,19 +22,22 @@ const WIDGET_LABELS: Record<WidgetType, string> = {
   greeting: 'Greeting',
   clock: 'Clock',
   weather: 'Weather',
+  quick_access: 'Quick Access',
 };
 
 const WIDGET_DESCRIPTIONS: Record<WidgetType, string> = {
   greeting: 'Time-based personal greeting.',
   clock: 'Current time and date.',
   weather: 'Current weather conditions.',
+  quick_access: 'Top visited sites bar at the top of the page.',
 };
 
-const ALL_WIDGET_TYPES: WidgetType[] = ['greeting', 'clock', 'weather'];
+const ALL_WIDGET_TYPES: WidgetType[] = ['greeting', 'clock', 'weather', 'quick_access'];
 
 function defaultWidget(type: WidgetType): WidgetConfig {
   if (type === 'greeting') return { id: 'greeting', type: 'greeting', size: 3, name: '' };
   if (type === 'clock') return { id: 'clock', type: 'clock', size: 3, showTime: true, showDate: true, format: '24h' };
+  if (type === 'quick_access') return { id: 'quick_access', type: 'quick_access', size: 3 };
   return { id: 'weather', type: 'weather', size: 3, provider: 'open-meteo', city: '', unit: 'C', showFeelsLike: true, showHumidity: true, enableEffects: false, effectOverride: 'auto' };
 }
 
@@ -102,7 +107,7 @@ export function NewTabPage() {
         {settings.widgets.map((widget) => (
           <div
             key={widget.id}
-            class="nt-widget-wrap"
+            class={`nt-widget-wrap${widget.type === 'quick_access' ? ' nt-widget-wrap--qa' : ''}`}
             style={{ transform: `scale(${SCALES[widget.size - 1] ?? 1})` }}
           >
             {widget.type === 'greeting' && <GreetingWidget config={widget} />}
@@ -113,6 +118,7 @@ export function NewTabPage() {
                 onEffectChange={setWeatherEffect}
               />
             )}
+            {widget.type === 'quick_access' && <QuickAccessBar />}
           </div>
         ))}
       </div>

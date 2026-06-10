@@ -215,3 +215,42 @@ html, body, #app {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
 }
+
+.nt-widget-wrap--qa {
+  pointer-events: auto;
+}
+
+.nt-quick-access {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+.nt-qa-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.nt-qa-item:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.nt-qa-favicon {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  display: block;
+}

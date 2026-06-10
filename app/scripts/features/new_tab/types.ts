@@ -2,7 +2,7 @@ import type { ComponentType } from 'preact';
 
 export type WallpaperProviderId = 'solid_color' | 'gradient' | 'picsum';
 export type ClockFormat = '12h' | '24h';
-export type WidgetType = 'greeting' | 'clock' | 'weather';
+export type WidgetType = 'greeting' | 'clock' | 'weather' | 'quick_access';
 
 export interface GreetingWidgetConfig {
   id: string;
@@ -33,7 +33,13 @@ export interface WeatherWidgetConfig {
   effectOverride: EffectId | 'auto';
 }
 
-export type WidgetConfig = GreetingWidgetConfig | ClockWidgetConfig | WeatherWidgetConfig;
+export interface QuickAccessWidgetConfig {
+  id: string;
+  type: 'quick_access';
+  size: number;
+}
+
+export type WidgetConfig = GreetingWidgetConfig | ClockWidgetConfig | WeatherWidgetConfig | QuickAccessWidgetConfig;
 
 export interface SolidColorSettings { color: string; }
 
