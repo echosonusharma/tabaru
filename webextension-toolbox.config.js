@@ -16,6 +16,11 @@ export function webpack(config, { dev, vendor }) {
     });
   }
 
+  config.module.rules.push({
+    test: /\.(vert|frag)$/,
+    type: 'asset/source',
+  });
+
   config.output = {
     ...config.output,
     publicPath: '/',
