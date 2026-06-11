@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabaru — Keyboard-First Tab Management Browser Extension</title>
+  <meta name="description" content="Tabaru is a fast, keyboard-driven browser extension for tab management. Fuzzy search across all tabs, auto tab groups, bookmarks, sessions, and a beautiful new tab page. Free and open source for Chrome, Firefox, Edge, and Opera." />
+  <meta name="keywords" content="tab manager, browser extension, tab search, fuzzy search, keyboard shortcuts, Chrome extension, Firefox extension, Edge extension, Opera extension, tab groups, new tab, productivity, open source" />
+  <meta name="author" content="Sonu Sharma" />
+  <meta name="theme-color" content="#cfa738" />
+  <link rel="canonical" href="https://tabaru.app/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tabaru.app/" />
+  <meta property="og:title" content="Tabaru — Keyboard-First Tab Management" />
+  <meta property="og:description" content="Fuzzy search every tab. Auto-group by URL. Replace your new tab page. Built for keyboard people." />
+  <meta property="og:image" content="https://tabaru.app/images/tabaru-icon.svg" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tabaru — Keyboard-First Tab Management" />
+  <meta name="twitter:description" content="Fuzzy search every tab. Auto-group by URL. Replace your new tab page." />
+  <meta name="twitter:image" content="https://tabaru.app/images/tabaru-icon.svg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tabaru",
+    "applicationCategory": "BrowserApplication",
+    "operatingSystem": "Chrome, Firefox, Edge, Opera",
+    "description": "Keyboard-driven browser extension for tab management with fuzzy search, auto tab groups, sessions, bookmarks, and a customizable new tab page.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Sonu Sharma" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "ratingCount": "1" }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="images/tabaru-icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ═══════ NAV ═══════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="images/tabaru-icon.svg" alt="Tabaru" />
+      <span>tabaru</span><span class="cursor"></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">features</a></li>
+      <li><a href="#shortcuts">shortcuts</a></li>
+      <li><a href="#install">install</a></li>
+      <li><a href="privacy.html">privacy</a></li>
+    </ul>
+    <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="nav-cta">
+      ★ GitHub
+    </a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-orb gold"></div>
+  <div class="hero-orb pink"></div>
+
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">
+        <span class="dot"></span>
+        v1.0.27 · open source · MV3
+      </div>
+      <h1>
+        Tab chaos<br />
+        is a <span class="strike">mouse</span><br />
+        <span class="accent">keyboard problem.</span>
+      </h1>
+      <p class="hero-tagline">
+        Fuzzy-search every open tab, restore closed sessions, auto-group tabs by URL pattern, and replace your new tab page — all without ever leaving the home row.
+      </p>
+      <div class="cta-row">
+        <a href="#install" class="btn btn-primary">
+          Install Tabaru <span class="btn-arrow">→</span>
+        </a>
+        <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="btn btn-secondary">
+          View source
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo terminal -->
+    <div class="terminal">
+      <div class="term-bar">
+        <span class="dot r"></span>
+        <span class="dot y"></span>
+        <span class="dot g"></span>
+        <span class="term-title">tabaru — fuzzy search</span>
+      </div>
+      <div class="term-body">
+        <div><span class="term-prompt"></span><span class="term-input">github pull</span></div>
+
+        <div class="term-section">Open tabs · 4</div>
+
+        <div class="term-result active">
+          <span class="fav" style="background:#cfa738"></span>
+          <span>
+            <div class="title">PR #142 · fix weather cache TTL</div>
+            <div class="url">github.com/echosonusharma/tabaru/pull/142</div>
+          </span>
+          <span class="mono" style="color:var(--gold)">↵</span>
+        </div>
+
+        <div class="term-result">
+          <span class="fav" style="background:#e05470"></span>
+          <span>
+            <div class="title">Pull requests · echosonusharma</div>
+            <div class="url">github.com/pulls</div>
+          </span>
+        </div>
+
+        <div class="term-result">
+          <span class="fav" style="background:#7faa3a"></span>
+          <span>
+            <div class="title">github.com/anthropics/claude-code</div>
+            <div class="url">github.com/anthropics/claude-code</div>
+          </span>
+        </div>
+
+        <div class="term-section">Recently closed · 12</div>
+
+        <div class="term-result">
+          <span class="fav" style="background:#666"></span>
+          <span>
+            <div class="title">PR review checklist - Notion</div>
+            <div class="url">notion.so/...</div>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FEATURES (BENTO) ═══════ -->
+<section id="features">
+  <div class="section-head">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything tabs should be</h2>
+    <p class="section-sub">Built for the kind of person who has 87 tabs open and a strong opinion about it.</p>
+  </div>
+
+  <div class="features">
+    <!-- big card: fuzzy search -->
+    <div class="f-card span-3 row-2">
+      <span class="f-tag">[ 01 ] PRIMARY</span>
+      <h3>Fuzzy tab search</h3>
+      <p>One overlay searches across every open tab, every window, every recently closed session. Sub-millisecond match with character-rank scoring.</p>
+      <pre class="f-ascii">┌──────────────────────────┐
+│ ❯ react hooks            │
+├──────────────────────────┤
+│ ▸ React — Hooks API ref. │
+│   Effect Hook deep dive  │
+│   useState patterns ·    │
+└──────────────────────────┘</pre>
+      <span class="icon-art">⌕</span>
+    </div>
+
+    <!-- auto groups -->
+    <div class="f-card span-3">
+      <span class="f-tag">[ 02 ] CHROMIUM</span>
+      <h3>Auto tab groups</h3>
+      <p>Define URL pattern rules. Matching tabs auto-group with title, color, and collapse state. Set it once.</p>
+      <div class="tab-viz">
+        <span class="tab g1">github.com</span>
+        <span class="tab g1">github.com</span>
+        <span class="tab g2">figma.com</span>
+        <span class="tab g2">figma.com</span>
+        <span class="tab g2">figma.com</span>
+        <span class="tab g3">localhost</span>
+      </div>
+      <span class="icon-art">⊞</span>
+    </div>
+
+    <!-- bookmarks -->
+    <div class="f-card span-3">
+      <span class="f-tag">[ 03 ] COMMANDS</span>
+      <h3>Bookmark & web search</h3>
+      <p>Type <code>!b query</code> to fuzzy-search bookmarks grouped by folder. Type <code>!s query</code> for instant web search.</p>
+      <span class="icon-art">!</span>
+    </div>
+
+    <!-- new tab -->
+    <div class="f-card span-4">
+      <span class="f-tag">[ 04 ] NEW TAB</span>
+      <h3>A new tab page that earns its keep</h3>
+      <p>Clock (12/24h), greeting, live weather with animated effects, quick-access links, and wallpaper modes — solid, gradient, or random photo.</p>
+      <pre class="f-ascii"> 14:32  ·  good evening, sonu
+         ⛅ 18° feels-like 16°    bengaluru
+         [ github ]  [ mail ]  [ calendar ]  [ +new ]</pre>
+      <span class="icon-art">⬡</span>
+    </div>
+
+    <!-- themes -->
+    <div class="f-card span-2">
+      <span class="f-tag">[ 05 ] THEMES</span>
+      <h3>Four themes</h3>
+      <p>Tabaru · Forest · Mocha · Midnight. Swap without reload.</p>
+      <span class="icon-art">◑</span>
+    </div>
+
+    <!-- sessions -->
+    <div class="f-card span-2">
+      <span class="f-tag">[ 06 ] SESSIONS</span>
+      <h3>Closed tab recovery</h3>
+      <p>Browse recently closed tabs and entire windows from the same search overlay.</p>
+      <span class="icon-art">⟳</span>
+    </div>
+
+    <!-- privacy -->
+    <div class="f-card span-2">
+      <span class="f-tag">[ 07 ] PRIVACY</span>
+      <h3>Zero telemetry</h3>
+      <p>No analytics. No tracking. No remote backend. Browsing data stays in the browser.</p>
+      <span class="icon-art">◎</span>
+    </div>
+
+    <!-- inline overlay -->
+    <div class="f-card span-2">
+      <span class="f-tag">[ 08 ] OVERLAY</span>
+      <h3>Inline overlay</h3>
+      <p>Content-script overlay — no popup window juggling. Triggers on the active tab.</p>
+      <span class="icon-art">▭</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SHORTCUTS ═══════ -->
+<section id="shortcuts" class="kbd-section">
+  <div class="section-head">
+    <div class="section-label">Keyboard</div>
+    <h2 class="section-title">All the keys, none of the mouse</h2>
+    <p class="section-sub">Defaults shown. Remap any of them via your browser's extension shortcut settings.</p>
+  </div>
+
+  <div class="kbd-grid">
+    <div class="kbd-row">
+      <span class="label">Open search overlay</span>
+      <span class="kbd-group"><kbd>Alt</kbd><kbd>Q</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Next tab</span>
+      <span class="kbd-group"><kbd>Alt</kbd><kbd>X</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Previous tab</span>
+      <span class="kbd-group"><kbd>Alt</kbd><kbd>Z</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Close current tab</span>
+      <span class="kbd-group"><kbd>Alt</kbd><kbd>W</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Next window</span>
+      <span class="kbd-group"><kbd>custom</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Previous window</span>
+      <span class="kbd-group"><kbd>custom</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Web search</span>
+      <span class="kbd-group"><kbd>!</kbd><kbd>s</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Bookmark search</span>
+      <span class="kbd-group"><kbd>!</kbd><kbd>b</kbd></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ STATS ═══════ -->
+<section>
+  <div class="section-head">
+    <div class="section-label">By the numbers</div>
+    <h2 class="section-title">Small footprint, large value</h2>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Trackers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Remote backends</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">All</div>
+      <div class="stat-label">Chromium + Firefox</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">MV3</div>
+      <div class="stat-label">Manifest version</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ INSTALL CTA ═══════ -->
+<div id="install" class="cta-strip">
+  <h2>Ready to take back the tab bar?</h2>
+  <p>Free, open source, no account required. Clone, build, and load — or grab the unpacked extension from releases.</p>
+  <div class="cta-row">
+    <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="btn btn-primary">
+      Install from GitHub <span class="btn-arrow">→</span>
+    </a>
+    <a href="privacy.html" class="btn btn-secondary">Read privacy policy</a>
+  </div>
+</div>
+
+</main>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-logo">
+      <img src="images/tabaru-icon.svg" alt="Tabaru" />
+      <span>tabaru · 2026</span>
+    </a>
+    <ul class="footer-links">
+      <li><a href="#features">features</a></li>
+      <li><a href="#shortcuts">shortcuts</a></li>
+      <li><a href="privacy.html">privacy</a></li>
+      <li><a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener">github</a></li>
+    </ul>
+    <span class="footer-copy">© Sonu Sharma · MIT</span>
+  </div>
+</footer>
+
+</body>
+</html>

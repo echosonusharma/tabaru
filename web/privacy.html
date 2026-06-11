@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Tabaru</title>
+  <meta name="description" content="Tabaru privacy policy. Tabaru is an offline-first browser extension that processes all data locally in your browser. No remote servers, no analytics, no tracking, no ads." />
+  <meta name="keywords" content="Tabaru privacy, browser extension privacy, no tracking, offline-first, open source privacy policy" />
+  <meta name="author" content="Sonu Sharma" />
+  <meta name="theme-color" content="#cfa738" />
+  <link rel="canonical" href="https://tabaru.app/privacy.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tabaru.app/privacy.html" />
+  <meta property="og:title" content="Privacy Policy — Tabaru" />
+  <meta property="og:description" content="All data processed locally. No remote servers. No analytics. No tracking." />
+  <meta property="og:image" content="https://tabaru.app/images/tabaru-icon.svg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Privacy Policy — Tabaru",
+    "description": "Privacy policy for the Tabaru browser extension.",
+    "url": "https://tabaru.app/privacy.html",
+    "isPartOf": { "@type": "WebSite", "name": "Tabaru", "url": "https://tabaru.app/" }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="images/tabaru-icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ═══════ NAV ═══════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="images/tabaru-icon.svg" alt="Tabaru" />
+      <span>tabaru</span><span class="cursor"></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#features">features</a></li>
+      <li><a href="index.html#shortcuts">shortcuts</a></li>
+      <li><a href="index.html#install">install</a></li>
+      <li><a href="privacy.html">privacy</a></li>
+    </ul>
+    <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="nav-cta">
+      ★ GitHub
+    </a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════ PAGE HEADER ═══════ -->
+<div class="page-head">
+  <div class="section-label">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="sub">What Tabaru does with your data — in plain language.<br />Short version: nothing leaves your browser.</p>
+  <span class="updated">Last updated: June 12, 2026</span>
+</div>
+
+<!-- ═══════ PROSE ═══════ -->
+<div class="prose-wrap">
+  <aside class="prose-toc">
+    <h4>Contents</h4>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#data">Data handling</a></li>
+      <li><a href="#permissions">Permissions</a></li>
+      <li><a href="#network">Network activity</a></li>
+      <li><a href="#browser">Browser-specific</a></li>
+      <li><a href="#third-party">Third-party</a></li>
+      <li><a href="#choices">Your choices</a></li>
+      <li><a href="#oss">Open source</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </aside>
+
+  <article class="prose">
+
+    <h2 id="overview">Overview</h2>
+    <p>
+      Tabaru is an open-source, offline-first browser extension for tab management.
+      It does not operate a remote backend, does not include analytics or advertising SDKs,
+      and does not intentionally collect, sell, or share personal data with third parties.
+      Data is processed locally in your browser to provide the extension's features.
+    </p>
+
+    <h2 id="data">Data Handling</h2>
+    <p>To work correctly, Tabaru may access information that already exists in your browser, such as:</p>
+    <ul>
+      <li>Open tabs, including tab titles and URLs</li>
+      <li>Tab groups (where supported by the browser)</li>
+      <li>Recently closed sessions and windows</li>
+      <li>Bookmarks</li>
+      <li>Default search engine integration through the browser's search API</li>
+      <li>Locally stored extension settings and cached UI data</li>
+    </ul>
+    <p>
+      This information is used only to provide the extension's functionality inside your browser.
+      Tabaru is designed so data stays local to your device unless your browser itself syncs
+      extension storage as part of the browser account features you enable.
+    </p>
+
+    <h2 id="permissions">Permissions Explained</h2>
+
+    <div class="perm-block">
+      <strong>storage</strong>
+      <p>Save extension settings and other local extension state.</p>
+    </div>
+    <div class="perm-block">
+      <strong>tabs</strong>
+      <p>Read and manage open tabs — titles, URLs, and tab state needed for search and navigation features.</p>
+    </div>
+    <div class="perm-block">
+      <strong>tabGroups · Chromium only</strong>
+      <p>Read and manage tab groups on Chromium-based browsers.</p>
+    </div>
+    <div class="perm-block">
+      <strong>sessions</strong>
+      <p>Access recently closed tabs or windows and related session state.</p>
+    </div>
+    <div class="perm-block">
+      <strong>activeTab</strong>
+      <p>Interact with the tab you are currently viewing when a feature is triggered by you.</p>
+    </div>
+    <div class="perm-block">
+      <strong>scripting</strong>
+      <p>Inject extension-controlled UI or scripts into pages when needed for extension features.</p>
+    </div>
+    <div class="perm-block">
+      <strong>idle</strong>
+      <p>Detect browser or device idle state so Tabaru can keep internal state in sync safely.</p>
+    </div>
+    <div class="perm-block">
+      <strong>search</strong>
+      <p>Interact with the browser's search capability for the <code>!s</code> command.</p>
+    </div>
+    <div class="perm-block">
+      <strong>bookmarks</strong>
+      <p>Read bookmark data for the <code>!b</code> bookmark search command.</p>
+    </div>
+    <div class="perm-block">
+      <strong>favicon · Chromium only</strong>
+      <p>Access favicon resources for display in the search overlay UI.</p>
+    </div>
+    <div class="perm-block">
+      <strong>host_permissions (<code>&lt;all_urls&gt;</code>)</strong>
+      <p>Required so the extension can run on pages where features are invoked and access page context across sites. Used only for tab management, search, bookmarks, session, and page-integration features.</p>
+    </div>
+
+    <h2 id="network">Network Activity</h2>
+    <p>
+      Tabaru works without a remote service operated by the developer. Two optional features make outbound requests:
+    </p>
+    <ul>
+      <li><strong>Weather widget</strong> — when enabled on the new tab page, requests are sent to public weather APIs (Open-Meteo or wttr.in) with the city name you configure. Responses are cached locally for 10 minutes. No personal data beyond the configured city is attached.</li>
+      <li><strong>Random wallpaper</strong> — when the "random photo" wallpaper provider is selected, images are fetched from Picsum Photos via standard HTTPS. No extension-specific data is attached.</li>
+    </ul>
+    <p>
+      Aside from these optional, user-configured features, Tabaru is not intended to send browsing data
+      to any developer-controlled server.
+    </p>
+
+    <h2 id="browser">Browser-Specific Notes</h2>
+    <ul>
+      <li>On Chromium-based browsers (Chrome, Edge, Opera), Tabaru declares <code>tabGroups</code> and <code>favicon</code> in addition to the shared permissions.</li>
+      <li>On Firefox, those Chromium-only permissions are not declared.</li>
+    </ul>
+
+    <h2 id="third-party">Third-Party Sharing</h2>
+    <p>Tabaru does not intentionally sell or share your personal information with third parties.</p>
+    <p>
+      If your browser provides its own sync, search, bookmark, or session services, any data handling
+      by those browser vendors is governed by their own privacy policies, not by Tabaru.
+    </p>
+
+    <h2 id="choices">Your Choices</h2>
+    <p>You can control Tabaru's access by:</p>
+    <ul>
+      <li>Uninstalling the extension</li>
+      <li>Disabling the extension in your browser</li>
+      <li>Clearing extension storage through your browser settings</li>
+      <li>Disabling individual widgets (weather, wallpaper) in the extension settings</li>
+      <li>Reviewing the source code before use</li>
+    </ul>
+
+    <h2 id="oss">Open Source</h2>
+    <p>
+      Tabaru is open source. You can review the code to verify how permissions are used
+      and what data is processed locally. The source is available on
+      <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+
+    <h2 id="contact">Contact</h2>
+    <p>
+      For questions, issues, or audit requests, open an issue on the
+      <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener">GitHub repository</a>.
+    </p>
+
+  </article>
+</div>
+
+</main>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-logo">
+      <img src="images/tabaru-icon.svg" alt="Tabaru" />
+      <span>tabaru · 2026</span>
+    </a>
+    <ul class="footer-links">
+      <li><a href="index.html#features">features</a></li>
+      <li><a href="index.html#shortcuts">shortcuts</a></li>
+      <li><a href="privacy.html">privacy</a></li>
+      <li><a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener">github</a></li>
+    </ul>
+    <span class="footer-copy">© Sonu Sharma · MIT</span>
+  </div>
+</footer>
+
+</body>
+</html>
