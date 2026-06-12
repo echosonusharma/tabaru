@@ -26,6 +26,12 @@
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3"
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.5",
+    "uuid": "^11.1.1",
+    "webpack-dev-server": "^5.2.4",
+    "webpackbar": "^7.0.0"
+  },
   "dependencies": {
     "ld-wasm-lib": "file:ld-wasm-lib/pkg",
     "preact": "^10.29.0",

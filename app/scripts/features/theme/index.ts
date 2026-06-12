@@ -20,7 +20,7 @@ export const THEMES: Theme[] = [
     bg: '#1a1912',
     rootVars: {
       '--color-bg': '#1a1912',
-      '--color-bg-secondary': '#5a5040',
+      '--color-bg-secondary': '#9a8a68',
       '--color-accent': '#cfa738',
       '--color-accent-rgb': '207, 167, 56',
       '--color-accent-hover': '#e0bc4a',
@@ -51,7 +51,7 @@ export const THEMES: Theme[] = [
     bg: '#111c15',
     rootVars: {
       '--color-bg': '#111c15',
-      '--color-bg-secondary': '#527040',
+      '--color-bg-secondary': '#7a9860',
       '--color-accent': '#a0c030',
       '--color-accent-rgb': '160, 192, 48',
       '--color-accent-hover': '#b8d840',
@@ -82,7 +82,7 @@ export const THEMES: Theme[] = [
     bg: '#1e1e2e',
     rootVars: {
       '--color-bg': '#1e1e2e',
-      '--color-bg-secondary': '#585b70',
+      '--color-bg-secondary': '#8490b8',
       '--color-accent': '#cba6f7',
       '--color-accent-rgb': '203, 166, 247',
       '--color-accent-hover': '#d4b8ff',
@@ -113,7 +113,7 @@ export const THEMES: Theme[] = [
     bg: '#0d1117',
     rootVars: {
       '--color-bg': '#0d1117',
-      '--color-bg-secondary': '#30475e',
+      '--color-bg-secondary': '#6888b0',
       '--color-accent': '#58a6ff',
       '--color-accent-rgb': '88, 166, 255',
       '--color-accent-hover': '#79b8ff',
