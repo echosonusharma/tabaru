@@ -314,7 +314,7 @@ async function handleTabMoveCmd(
     let currentTabIndex = windowTabIds?.findIndex((id) => id === activeTabId) ?? -1;
 
     if (currentTabIndex === -1) {
-      // Store is stale — rebuild from live browser state and retry
+      // Store is stale - rebuild from live browser state and retry
       const realTabs = await browser.tabs.query({ windowId: activeWindowId });
       realTabs.sort((a, b) => a.index - b.index);
       windowTabIds = realTabs.map((t) => t.id!).filter((id) => id !== undefined);

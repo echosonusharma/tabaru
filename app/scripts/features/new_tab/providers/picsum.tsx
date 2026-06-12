@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { useState, useEffect, useRef } from 'preact/hooks';
 import type { PicsumSettings } from '../types';
 
-// Unique per page-load — ensures "every new tab" mode gets a fresh random image
+// Unique per page-load - ensures "every new tab" mode gets a fresh random image
 // instead of hitting the browser cache for the same bare URL.
 const SESSION_SEED = `s${Date.now()}`;
 

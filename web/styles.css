@@ -1,5 +1,5 @@
 /* ═════════════════════════════════════════════════════════════════
-   TABARU — full-bleed terminal landing
+   TABARU - full-bleed terminal landing
    ═════════════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -560,7 +560,7 @@ section { padding: 100px 0; position: relative; }
   font-size: 1.05rem;
 }
 
-/* ═══════ FEATURES — bento grid ═══════ */
+/* ═══════ FEATURES - bento grid ═══════ */
 .features {
   max-width: 1400px;
   margin: 0 auto;

@@ -104,7 +104,7 @@ import { themeStore, getTheme, buildContentThemeCSS, DEFAULT_THEME_ID } from "./
   // from a second rapid shortcut press finding no existing container.
   document.body.appendChild(container);
 
-  // Fetch lazily — listener reads openAndCloseShortcut at call time, so this resolves before any keypress
+  // Fetch lazily - listener reads openAndCloseShortcut at call time, so this resolves before any keypress
   browser.runtime.sendMessage({ action: "getOpenAndCloseShortcut" })
     .then((s) => { openAndCloseShortcut = (s as string | null); })
     .catch(() => {});

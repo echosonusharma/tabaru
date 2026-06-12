@@ -13,7 +13,6 @@ import type {
   NewTabSettings, WallpaperProviderId,
   WidgetConfig, WidgetType, EffectId,
   GreetingWidgetConfig, ClockWidgetConfig, WeatherWidgetConfig,
-  QuickAccessWidgetConfig,
 } from './types';
 
 const SCALES = [0.65, 0.8, 1.0, 1.2, 1.5];
@@ -38,7 +37,7 @@ function defaultWidget(type: WidgetType): WidgetConfig {
   if (type === 'greeting') return { id: 'greeting', type: 'greeting', size: 3, name: '' };
   if (type === 'clock') return { id: 'clock', type: 'clock', size: 3, showTime: true, showDate: true, format: '24h' };
   if (type === 'quick_access') return { id: 'quick_access', type: 'quick_access', size: 3 };
-  return { id: 'weather', type: 'weather', size: 3, provider: 'open-meteo', city: '', unit: 'C', showFeelsLike: true, showHumidity: true, enableEffects: false, effectOverride: 'auto' };
+  return { id: 'weather', type: 'weather', size: 3, provider: 'open-meteo', city: '', unit: 'C', showFeelsLike: true, showHumidity: true, enableEffects: true, effectOverride: 'auto' };
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

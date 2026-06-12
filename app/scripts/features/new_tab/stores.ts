@@ -8,7 +8,7 @@ export const DEFAULT_NEW_TAB_SETTINGS: NewTabSettings = {
   gradient: { from: '#0d1117', to: '#1e1c14', angle: 135 },
   picsum: { seed: '', blur: 0, grayscale: false, refreshInterval: 0 },
   widgets: [
-    { id: 'clock', type: 'clock', size: 3, showTime: true, showDate: true, format: '24h' },
+    { id: 'clock', type: 'clock', size: 3, showTime: true, showDate: true, format: '12h' },
   ],
 };
 

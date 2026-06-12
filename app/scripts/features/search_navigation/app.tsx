@@ -570,7 +570,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
           if (cmd) selectCommand(cmd);
         } else if (filteredTabs[selectedIndex]) {
           const tab = filteredTabs[selectedIndex];
-          // Send message before onClose — in popup mode, window.close() kills the JS context
+          // Send message before onClose - in popup mode, window.close() kills the JS context
           // before async messages fire if called first.
           if (tab.source === "recent") {
             broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });

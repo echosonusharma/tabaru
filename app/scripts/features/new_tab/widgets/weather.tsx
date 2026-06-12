@@ -56,7 +56,7 @@ export function WeatherWidget({ config, onEffectChange }: {
   useEffect(() => {
     if (!config.enableEffects) { onEffectChange?.('none'); return; }
     if (config.effectOverride !== 'auto') { onEffectChange?.(config.effectOverride); return; }
-    // auto + enableEffects toggled on — apply last fetched code if available
+    // auto + enableEffects toggled on - apply last fetched code if available
     if (lastCodeRef.current !== null) onEffectChange?.(wmoToEffect(lastCodeRef.current));
   }, [config.enableEffects, config.effectOverride]);
 

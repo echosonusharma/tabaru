@@ -188,7 +188,7 @@ async function openPopupFallback(_activeWindowId: number): Promise<void> {
 
 export async function handleSearchCmd(activeTabId: number, activeWindowId: number): Promise<void> {
   if (searchPopupConnections > 0) {
-    // commands.onCommand only fires in service worker (MV3), not popup — relay close via message
+    // commands.onCommand only fires in service worker (MV3), not popup - relay close via message
     try {
       await browser.runtime.sendMessage({ action: "closePopup" });
     } catch {}
@@ -203,13 +203,13 @@ export async function handleSearchCmd(activeTabId: number, activeWindowId: numbe
   }
 
   // sendMessage returns true when overlay is open (messageListener responds).
-  // When overlay is closed the listener is removed — polyfill resolves undefined (not throws),
+  // When overlay is closed the listener is removed - polyfill resolves undefined (not throws),
   // so we check the return value instead of relying on catch.
   let closed: unknown;
   try {
     closed = await browser.tabs.sendMessage(activeTabId, { action: "closeSearchTab" });
   } catch {
-    // Tab has no content script at all — fall through to inject.
+    // Tab has no content script at all - fall through to inject.
   }
 
   if (!closed) {

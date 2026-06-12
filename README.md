@@ -5,7 +5,7 @@
 <h1 align="center">Tabaru</h1>
 
 <p align="center">
-  <b>Tabaru</b> is a lightweight browser extension for efficient tab management. Quick navigation, fuzzy search, bookmarks, and auto tab groups — all keyboard-driven.
+  <b>Tabaru</b> is a lightweight browser extension for efficient tab management. Quick navigation, fuzzy search, bookmarks, and auto tab groups - all keyboard-driven.
 </p>
 
 ## Features
@@ -17,8 +17,8 @@
 - Kill the current tab with a shortcut.
 
 **Commands** (type `!` to trigger)
-- `!s <query>` — web search or navigate to a domain.
-- `!b <query>` — fuzzy search bookmarks, grouped by folder.
+- `!s <query>` - web search or navigate to a domain.
+- `!b <query>` - fuzzy search bookmarks, grouped by folder.
 
 **Auto Tab Groups** *(Chrome / Edge / Opera only)*
 - URL pattern rules (e.g. `https://*.github.com/*`) auto-group matching tabs.
@@ -31,7 +31,7 @@
 
 **General**
 - Theme selector (Tabaru, Forest, Mocha, Midnight).
-- Inline content-script overlay — no popup required.
+- Inline content-script overlay - no popup required.
 - Cross-browser: Chrome, Firefox, Edge, Opera.
 
 
