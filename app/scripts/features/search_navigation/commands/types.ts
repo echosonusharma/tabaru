@@ -27,6 +27,19 @@ export interface CommandMeta {
    * generic preview row. Used by `!b` (bookmark search) today.
    */
   custom?: boolean;
+  /**
+   * When set, the overlay populates the picker list from this message action
+   * (returning string[]) instead of the user's command history.
+   * Used by `!op` to show saved session names.
+   */
+  pickListAction?: string;
+  /** Header shown above the picker list. Default "Recent". */
+  pickListLabel?: string;
+  /**
+   * When set, each picker row gets a delete button that dispatches this message
+   * action with `{ name }` payload. UI then refreshes via pickListAction.
+   */
+  deleteListAction?: string;
 }
 
 /** Backend handler — runs in the service worker. Return true on success. */

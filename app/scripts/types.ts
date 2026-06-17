@@ -33,7 +33,9 @@ export type ExtensionMessage =
   | { action: "groupTabsByRule"; data: { ruleId: string } }
   | { action: "getOpenAndCloseShortcut" }
   | { action: "closePopup" }
-  | { action: "fetchWeather"; data: { provider: 'open-meteo' | 'wttr'; city: string; unit: 'C' | 'F' } };
+  | { action: "fetchWeather"; data: { provider: 'open-meteo' | 'wttr'; city: string; unit: 'C' | 'F' } }
+  | { action: "listSavedSessions" }
+  | { action: "deleteSavedSession"; data: { name: string } };
 
 export enum StoreType {
   LOCAL = "local",

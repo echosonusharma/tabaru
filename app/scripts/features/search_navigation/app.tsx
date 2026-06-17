@@ -257,18 +257,21 @@ function useSearch() {
     return () => { cancelled = true; clearTimeout(handle); };
   }, [searchQuery, tabs, isCommandMode, isSuggestingCommands, isBookmarkMode]);
 
-  useEffect(() => {
+  const refetchRecents = () => {
     if (!activeCommand || activeCommand.command.custom || activeCommand.command.requiresKeyword === false) {
       setRecentCommands([]);
       return;
     }
-    broadcastMsgToServiceWorker({
-      action: "getRecentCommands",
-      data: { commandKey: activeCommand.command.key },
-    })
+    const cmd = activeCommand.command;
+    const msg = cmd.pickListAction
+      ? { action: cmd.pickListAction as any }
+      : { action: "getRecentCommands", data: { commandKey: cmd.key } };
+    broadcastMsgToServiceWorker(msg as any)
       .then((res) => setRecentCommands((res as string[]) ?? []))
       .catch(() => setRecentCommands([]));
-  }, [activeCommand?.command.key]);  // eslint-disable-line react-hooks/exhaustive-deps
+  };
+
+  useEffect(() => { refetchRecents(); }, [activeCommand?.command.key]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isBookmarkMode) {
@@ -298,6 +301,7 @@ function useSearch() {
     isSuggestingCommands, commandSuggestions,
     recentCommands,
     bookmarkResults,
+    refetchRecents,
   };
 }
 
@@ -307,12 +311,14 @@ function CommandModeBody({
   selectedIndex,
   resultsRef,
   onSelectRecent,
+  onDeleteRecent,
 }: {
   activeCommand: { command: CommandMeta; keyword: string };
   recentCommands: string[];
   selectedIndex: number;
   resultsRef: preact.RefObject<HTMLUListElement>;
   onSelectRecent: (keyword: string) => void;
+  onDeleteRecent?: (keyword: string) => void;
 }) {
   const cmd = activeCommand.command;
   const keyword = activeCommand.keyword.trim();
@@ -351,7 +357,7 @@ function CommandModeBody({
       )}
       {recentCommands.length > 0 && (
         <Fragment>
-          <div className="tab-count">Recent</div>
+          <div className="tab-count">{cmd.pickListLabel ?? "Recent"}</div>
           <ul className="search-results" ref={resultsRef}>
             {recentCommands.map((kw, index) => (
               <li
@@ -363,6 +369,14 @@ function CommandModeBody({
                 <div className="tab-info">
                   <span className="tab-title">{kw}</span>
                 </div>
+                {onDeleteRecent && (
+                  <button
+                    type="button"
+                    className="picker-delete"
+                    title={`Delete "${kw}"`}
+                    onClick={(e) => { e.stopPropagation(); onDeleteRecent(kw); }}
+                  >×</button>
+                )}
               </li>
             ))}
           </ul>
@@ -490,6 +504,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     isSuggestingCommands, commandSuggestions,
     recentCommands,
     bookmarkResults,
+    refetchRecents,
   } = useSearch();
 
   const [hasNavigated, setHasNavigated] = useState(false);
@@ -525,6 +540,14 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
 
   const selectRecentQuery = (keyword: string) => {
     setSearchQuery(`${COMMAND_PREFIX}${activeCommand!.command.key} ${keyword}`);
+  };
+
+  const deleteRecent = (name: string) => {
+    const action = activeCommand?.command.deleteListAction;
+    if (!action) return;
+    broadcastMsgToServiceWorker({ action: action as any, data: { name } } as any)
+      .then(() => refetchRecents())
+      .catch(console.error);
   };
 
   const executeCommand = (cmdKey: string, keyword: string) => {
@@ -660,6 +683,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
             selectedIndex={selectedIndex}
             resultsRef={resultsRef}
             onSelectRecent={selectRecentQuery}
+            onDeleteRecent={activeCommand?.command.deleteListAction ? deleteRecent : undefined}
           />
         ) : isSuggestingCommands ? (
           <Fragment>

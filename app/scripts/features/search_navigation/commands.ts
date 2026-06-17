@@ -1,6 +1,8 @@
 import { commandHistoryStore } from "./stores";
 import { dispatchCommand } from "./commands/backend/dispatch";
 
+export { listSavedSessionNames, deleteSavedSession } from "./commands/backend/sessions";
+
 const MAX_COMMAND_HISTORY = 5;
 
 export async function recordCommandHistory(commandKey: string, keyword: string): Promise<boolean> {

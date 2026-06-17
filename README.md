@@ -30,6 +30,8 @@ Define URL pattern rules like `https://*.github.com/*`. Matching tabs auto-group
 - `!b <query>` - fuzzy-search bookmarks, grouped by folder
 - `!d` - close duplicate tabs across all windows (keeps the active / pinned / newest)
 - `!c <query>` - bulk-close every tab whose title or URL contains the query
+- `!sv <name>` - snapshot the current window's tabs under a name
+- `!op <name>` - restore a saved session in a new window
 
 ### New tab page
 Replaces your browser's default new tab with something useful:

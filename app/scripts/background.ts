@@ -24,6 +24,8 @@ import {
   incrementSearchPopupConnections,
   decrementSearchPopupConnections,
   handleSearchCmd,
+  listSavedSessionNames,
+  deleteSavedSession,
 } from "./features/search_navigation";
 
 // Serializes all tabsStore read-modify-write operations so concurrent tab events
@@ -130,6 +132,12 @@ browser.runtime.onMessage.addListener(
         const cmd = cmds.find((c) => c.name === "open_and_close_search");
         return cmd?.shortcut ?? null;
       }
+
+      case "listSavedSessions":
+        return await listSavedSessionNames();
+
+      case "deleteSavedSession":
+        return await deleteSavedSession(msg.data.name);
 
       case "fetchWeather": {
         try {

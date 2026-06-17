@@ -147,6 +147,37 @@
   line-height: 1 !important;
 }
 
+#tabaru-content .picker-delete {
+  background: none !important;
+  border: 1px solid transparent !important;
+  color: rgba(var(--t-accent-rgb), 0.35) !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  padding: 0 !important;
+  margin-left: auto !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  opacity: 0 !important;
+  transition: opacity .15s, color .15s, background .15s, border-color .15s !important;
+}
+
+#tabaru-content .tab-item:hover .picker-delete,
+#tabaru-content .tab-item.selected .picker-delete {
+  opacity: 1 !important;
+}
+
+#tabaru-content .picker-delete:hover {
+  color: #e05470 !important;
+  border-color: rgba(224, 84, 112, 0.4) !important;
+  background: rgba(224, 84, 112, 0.08) !important;
+}
+
 #tabaru-content .close-button:hover {
   background: rgba(var(--t-accent-rgb), 0.1) !important;
   color: var(--t-fg) !important;
