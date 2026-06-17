@@ -607,6 +607,10 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
         break;
       case " ":
         if (isSuggestingCommands && commandSuggestions.length > 0) {
+          const typedKey = searchQuery.slice(COMMAND_PREFIX.length);
+          // Exact key already typed (e.g. `!c`) — let space land naturally so the
+          // keyword command activates, instead of auto-picking another suggestion.
+          if (COMMAND_MAP.has(typedKey)) break;
           e.preventDefault();
           const cmd = commandSuggestions[selectedIndex] ?? commandSuggestions[0];
           if (cmd) selectCommand(cmd);

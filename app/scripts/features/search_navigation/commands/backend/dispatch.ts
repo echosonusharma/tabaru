@@ -2,6 +2,7 @@ import { logger } from "../../../../utils";
 import { CommandExecute } from "../types";
 import { searchExecute } from "./search";
 import { duplicatesExecute } from "./duplicates";
+import { closeExecute } from "./close";
 
 /**
  * Backend command registry. Maps command key → executor.
@@ -9,7 +10,8 @@ import { duplicatesExecute } from "./duplicates";
  */
 const EXECUTORS: Record<string, CommandExecute> = {
   s: searchExecute,
-  dup: duplicatesExecute,
+  d: duplicatesExecute,
+  c: closeExecute,
 };
 
 export async function dispatchCommand(commandKey: string, keyword: string): Promise<boolean> {

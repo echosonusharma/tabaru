@@ -34,7 +34,7 @@ async function closeDuplicateTabs(): Promise<boolean> {
   if (toClose.length > 0) {
     await browser.tabs.remove(toClose);
   }
-  logger(`!dup: closed ${toClose.length} duplicate tab(s)`);
+  logger(`!d: closed ${toClose.length} duplicate tab(s)`);
   return true;
 }
 
