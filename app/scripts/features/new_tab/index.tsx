@@ -9,6 +9,7 @@ import { WeatherWidget } from './widgets/weather';
 import { QuickAccessBar } from './widgets/quick_access';
 import { PicsumBackground } from './providers/picsum';
 import { EffectsCanvas } from './effects';
+import { themeStore, getTheme, applyRootTheme, DEFAULT_THEME_ID, ThemeId } from '../theme';
 import type {
   NewTabSettings, WallpaperProviderId,
   WidgetConfig, WidgetType, EffectId,
@@ -47,6 +48,7 @@ function getProviderSettings(settings: NewTabSettings): unknown {
     case 'solid_color': return settings.solidColor;
     case 'gradient': return settings.gradient;
     case 'picsum': return settings.picsum;
+    case 'game_of_life': return settings.gameOfLife;
   }
 }
 
@@ -55,6 +57,7 @@ function mergeProviderSettings(settings: NewTabSettings, providerSettings: unkno
     case 'solid_color': return { ...settings, solidColor: providerSettings as any };
     case 'gradient': return { ...settings, gradient: providerSettings as any };
     case 'picsum': return { ...settings, picsum: providerSettings as any };
+    case 'game_of_life': return { ...settings, gameOfLife: providerSettings as any };
   }
 }
 
@@ -69,6 +72,7 @@ export function NewTabPage() {
 
   useEffect(() => {
     getNewTabSettings().then(setSettings);
+    themeStore.get().then((tid) => applyRootTheme(getTheme((tid ?? DEFAULT_THEME_ID) as ThemeId)));
   }, []);
 
   useEffect(() => {
@@ -76,7 +80,12 @@ export function NewTabPage() {
       changes: Record<string, browser.Storage.StorageChange>,
       area: string,
     ) => {
-      if (area !== 'local' || !changes['new_tab_settings']) return;
+      if (area !== 'local') return;
+      if (changes['theme']) {
+        const tid = (changes['theme'].newValue ?? DEFAULT_THEME_ID) as ThemeId;
+        applyRootTheme(getTheme(tid));
+      }
+      if (!changes['new_tab_settings']) return;
       const val = changes['new_tab_settings'].newValue as NewTabSettings | undefined;
       const next = { ...DEFAULT_NEW_TAB_SETTINGS, ...(val ?? {}), widgets: val?.widgets ?? DEFAULT_NEW_TAB_SETTINGS.widgets };
       setSettings(next);

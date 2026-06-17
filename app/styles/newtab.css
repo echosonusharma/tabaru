@@ -38,6 +38,12 @@ html, body, #app {
   opacity: 1;
 }
 
+.nt-background-gol {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .nt-overlay {
   position: absolute;
   inset: 0;

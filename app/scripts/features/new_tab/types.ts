@@ -1,6 +1,6 @@
 import type { ComponentType } from 'preact';
 
-export type WallpaperProviderId = 'solid_color' | 'gradient' | 'picsum';
+export type WallpaperProviderId = 'solid_color' | 'gradient' | 'picsum' | 'game_of_life';
 export type ClockFormat = '12h' | '24h';
 export type WidgetType = 'greeting' | 'clock' | 'weather' | 'quick_access';
 
@@ -52,6 +52,14 @@ export interface PicsumSettings {
   refreshInterval: number;
 }
 
+export interface GameOfLifeSettings {
+  cellSize: number;      // px per cell
+  speed: number;         // ms between generations
+  opacity: number;       // 0..1 cell opacity
+  density: number;       // 0..1 initial alive probability
+  resetInterval: number; // minutes; 0 = never
+}
+
 export type EffectId = 'none' | 'rain' | 'storm' | 'snow' | 'fog' | 'stars';
 
 export interface NewTabSettings {
@@ -59,6 +67,7 @@ export interface NewTabSettings {
   solidColor: SolidColorSettings;
   gradient: GradientSettings;
   picsum: PicsumSettings;
+  gameOfLife: GameOfLifeSettings;
   widgets: WidgetConfig[];
 }
 
