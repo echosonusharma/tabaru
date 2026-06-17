@@ -28,6 +28,12 @@
   </script>
 
   <link rel="icon" type="image/svg+xml" href="images/tabaru-icon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="images/icon-48.png" />
+  <link rel="icon" type="image/png" sizes="128x128" href="images/icon-128.png" />
+  <link rel="apple-touch-icon" sizes="128x128" href="images/icon-128.png" />
+  <link rel="shortcut icon" href="images/icon-32.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -40,7 +46,7 @@
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">
       <img src="images/tabaru-icon.svg" alt="Tabaru" />
-      <span>tabaru</span><span class="cursor"></span>
+      <span>tabaru</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html#features">features</a></li>
@@ -61,7 +67,7 @@
   <div class="section-label">Legal</div>
   <h1>Privacy Policy</h1>
   <p class="sub">What Tabaru does with your data - in plain language.<br />Short version: nothing leaves your browser.</p>
-  <span class="updated">Last updated: June 12, 2026</span>
+  <span class="updated">Last updated: June 17, 2026</span>
 </div>
 
 <!-- ═══════ PROSE ═══════ -->
@@ -99,6 +105,7 @@
       <li>Recently closed sessions and windows</li>
       <li>Bookmarks</li>
       <li>Default search engine integration through the browser's search API</li>
+      <li>Most-visited sites list for quick-access shortcuts on the new tab page</li>
       <li>Locally stored extension settings and cached UI data</li>
     </ul>
     <p>
@@ -148,6 +155,10 @@
     <div class="perm-block">
       <strong>favicon · Chromium only</strong>
       <p>Access favicon resources for display in the search overlay UI.</p>
+    </div>
+    <div class="perm-block">
+      <strong>topSites</strong>
+      <p>Read the browser's most-visited sites list to populate quick-access shortcuts on the new tab page.</p>
     </div>
     <div class="perm-block">
       <strong>host_permissions (<code>&lt;all_urls&gt;</code>)</strong>

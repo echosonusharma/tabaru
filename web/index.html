@@ -36,6 +36,12 @@
   </script>
 
   <link rel="icon" type="image/svg+xml" href="images/tabaru-icon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="images/icon-48.png" />
+  <link rel="icon" type="image/png" sizes="128x128" href="images/icon-128.png" />
+  <link rel="apple-touch-icon" sizes="128x128" href="images/icon-128.png" />
+  <link rel="shortcut icon" href="images/icon-32.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -48,7 +54,7 @@
   <div class="nav-inner">
     <a href="/" class="nav-logo">
       <img src="images/tabaru-icon.svg" alt="Tabaru" />
-      <span>tabaru</span><span class="cursor"></span>
+      <span>tabaru</span>
     </a>
     <ul class="nav-links">
       <li><a href="#features">features</a></li>
@@ -66,32 +72,35 @@
 
 <!-- ═══════ HERO ═══════ -->
 <section class="hero">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-orb gold"></div>
-  <div class="hero-orb pink"></div>
-
+  <div class="hero-bg"></div>
   <div class="hero-inner">
     <div>
       <div class="hero-badge">
         <span class="dot"></span>
-        v1.0.27 · open source · MV3
+        v0.9.0 &nbsp;·&nbsp; open source &nbsp;·&nbsp; MV3
       </div>
       <h1>
-        Tab chaos<br />
-        is a <span class="strike">mouse</span><br />
-        <span class="accent">keyboard problem.</span>
+        Tab management,<br />
+        <span class="accent">keyboard first.</span>
       </h1>
       <p class="hero-tagline">
-        Fuzzy-search every open tab, restore closed sessions, auto-group tabs by URL pattern, and replace your new tab page-all without ever leaving the home row.
+        Fuzzy-search every open tab, restore closed sessions, auto-group by URL pattern, and replace your new tab page - without leaving the home row.
       </p>
       <div class="cta-row">
-        <a href="#install" class="btn btn-primary">
-          Install Tabaru <span class="btn-arrow">→</span>
+        <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc" target="_blank" rel="noopener" class="btn btn-primary">
+          Install for Chrome <span class="btn-arrow">→</span>
         </a>
         <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="btn btn-secondary">
           View source
         </a>
       </div>
+
+      <ul class="hero-meta">
+        <li><span class="k">Browsers</span><span class="v">Chrome · Firefox · Edge · Opera</span></li>
+        <li><span class="k">License</span><span class="v">MIT</span></li>
+        <li><span class="k">Trackers</span><span class="v">0</span></li>
+        <li><span class="k">Backend</span><span class="v">None</span></li>
+      </ul>
     </div>
 
     <!-- Demo terminal -->
@@ -141,9 +150,29 @@
             <div class="url">notion.so/...</div>
           </span>
         </div>
+
+        <div class="term-result">
+          <span class="fav" style="background:#4a8ec9"></span>
+          <span>
+            <div class="title">Pulling changes · git docs</div>
+            <div class="url">git-scm.com/docs/git-pull</div>
+          </span>
+        </div>
+
+        <div class="term-hint">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> open</span>
+          <span><kbd>⌥</kbd><kbd>W</kbd> close</span>
+          <span><kbd>esc</kbd> dismiss</span>
+        </div>
       </div>
     </div>
   </div>
+
+  <a href="#features" class="scroll-cue" aria-label="Scroll to features">
+    <span>scroll</span>
+    <span class="arrow">↓</span>
+  </a>
 </section>
 
 <!-- ═══════ FEATURES (BENTO) ═══════ -->
@@ -155,24 +184,14 @@
   </div>
 
   <div class="features">
-    <!-- big card: fuzzy search -->
-    <div class="f-card span-3 row-2">
-      <span class="f-tag">[ 01 ] PRIMARY</span>
+    <div class="f-card">
+      <span class="f-tag">Primary</span>
       <h3>Fuzzy tab search</h3>
-      <p>One overlay searches across every open tab, every window, every recently closed session. Sub-millisecond match with character-rank scoring.</p>
-      <pre class="f-ascii">┌──────────────────────────┐
-│ ❯ react hooks            │
-├──────────────────────────┤
-│ ▸ React-Hooks API ref. │
-│   Effect Hook deep dive  │
-│   useState patterns ·    │
-└──────────────────────────┘</pre>
-      <span class="icon-art">⌕</span>
+      <p>One overlay searches every open tab, every window, every recently closed session. Sub-millisecond match with character-rank scoring.</p>
     </div>
 
-    <!-- auto groups -->
-    <div class="f-card span-3">
-      <span class="f-tag">[ 02 ] CHROMIUM</span>
+    <div class="f-card">
+      <span class="f-tag">Chromium</span>
       <h3>Auto tab groups</h3>
       <p>Define URL pattern rules. Matching tabs auto-group with title, color, and collapse state. Set it once.</p>
       <div class="tab-viz">
@@ -180,61 +199,32 @@
         <span class="tab g1">github.com</span>
         <span class="tab g2">figma.com</span>
         <span class="tab g2">figma.com</span>
-        <span class="tab g2">figma.com</span>
         <span class="tab g3">localhost</span>
       </div>
-      <span class="icon-art">⊞</span>
     </div>
 
-    <!-- bookmarks -->
-    <div class="f-card span-3">
-      <span class="f-tag">[ 03 ] COMMANDS</span>
-      <h3>Bookmark & web search</h3>
-      <p>Type <code>!b query</code> to fuzzy-search bookmarks grouped by folder. Type <code>!s query</code> for instant web search.</p>
-      <span class="icon-art">!</span>
+    <div class="f-card">
+      <span class="f-tag">Commands</span>
+      <h3>Bookmark &amp; web search</h3>
+      <p>Type <code>!b query</code> to fuzzy-search bookmarks by folder. Type <code>!s query</code> for instant web search.</p>
     </div>
 
-    <!-- new tab -->
-    <div class="f-card span-4">
-      <span class="f-tag">[ 04 ] NEW TAB</span>
-      <h3>A new tab page that earns its keep</h3>
-      <p>Clock (12/24h), greeting, live weather with animated effects, quick-access links, and wallpaper modes-solid, gradient, or random photo.</p>
-      <pre class="f-ascii"> 14:32  ·  good evening, sonu
-         ⛅ 18° feels-like 16°    bengaluru
-         [ github ]  [ mail ]  [ calendar ]  [ +new ]</pre>
-      <span class="icon-art">⬡</span>
+    <div class="f-card">
+      <span class="f-tag">New tab</span>
+      <h3>New tab that earns its keep</h3>
+      <p>Clock, greeting, live weather, quick-access links, and wallpaper modes - solid, gradient, or random photo.</p>
     </div>
 
-    <!-- themes -->
-    <div class="f-card span-2">
-      <span class="f-tag">[ 05 ] THEMES</span>
-      <h3>Four themes</h3>
-      <p>Tabaru · Forest · Mocha · Midnight. Swap without reload.</p>
-      <span class="icon-art">◑</span>
-    </div>
-
-    <!-- sessions -->
-    <div class="f-card span-2">
-      <span class="f-tag">[ 06 ] SESSIONS</span>
+    <div class="f-card">
+      <span class="f-tag">Sessions</span>
       <h3>Closed tab recovery</h3>
       <p>Browse recently closed tabs and entire windows from the same search overlay.</p>
-      <span class="icon-art">⟳</span>
     </div>
 
-    <!-- privacy -->
-    <div class="f-card span-2">
-      <span class="f-tag">[ 07 ] PRIVACY</span>
+    <div class="f-card">
+      <span class="f-tag">Privacy</span>
       <h3>Zero telemetry</h3>
-      <p>No analytics. No tracking. No remote backend. Browsing data stays in the browser.</p>
-      <span class="icon-art">◎</span>
-    </div>
-
-    <!-- inline overlay -->
-    <div class="f-card span-2">
-      <span class="f-tag">[ 08 ] OVERLAY</span>
-      <h3>Inline overlay</h3>
-      <p>Content-script overlay-no popup window juggling. Triggers on the active tab.</p>
-      <span class="icon-art">▭</span>
+      <p>No analytics, no tracking, no remote backend. Browsing data stays in the browser.</p>
     </div>
   </div>
 </section>
@@ -312,12 +302,15 @@
 <!-- ═══════ INSTALL CTA ═══════ -->
 <div id="install" class="cta-strip">
   <h2>Ready to take back the tab bar?</h2>
-  <p>Free, open source, no account required. Clone, build, and load-or grab the unpacked extension from releases.</p>
+  <p>Free, open source, no account required. Get it from the Chrome Web Store, or clone and build for any Chromium browser or Firefox.</p>
   <div class="cta-row">
-    <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="btn btn-primary">
-      Install from GitHub <span class="btn-arrow">→</span>
+    <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc" target="_blank" rel="noopener" class="btn btn-primary">
+      Chrome Web Store <span class="btn-arrow">→</span>
     </a>
-    <a href="privacy.html" class="btn btn-secondary">Read privacy policy</a>
+    <a href="https://github.com/echosonusharma/tabaru" target="_blank" rel="noopener" class="btn btn-secondary">
+      View on GitHub
+    </a>
+    <a href="privacy.html" class="btn btn-secondary">Privacy policy</a>
   </div>
 </div>
 

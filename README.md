@@ -1,97 +1,77 @@
 <p align="center">
-  <img src="app/images/tabaru-icon.svg" width="128" height="128" alt="Tabaru Icon">
+  <img src="app/images/tabaru-icon.svg" width="120" height="120" alt="Tabaru">
 </p>
 
 <h1 align="center">Tabaru</h1>
 
 <p align="center">
-  <b>Tabaru</b> is a lightweight browser extension for efficient tab management. Quick navigation, fuzzy search, bookmarks, and auto tab groups - all keyboard-driven.
+  Keyboard-first tab management for the browser.<br>
+  Fuzzy search every tab, restore closed sessions, auto-group by URL, replace your new tab page.
+</p>
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc">Chrome Web Store</a>
+  ·
+  <a href="https://tabaru.app">Website</a>
+  ·
+  <a href="PRIVACY_POLICY.md">Privacy</a>
 </p>
 
 ## Features
 
-**Tab Search & Navigation**
-- Fuzzy search across all open tabs, windows, and recently closed tabs.
-- Switch to any tab or restore recently closed tabs from the search overlay.
-- Cycle through tabs and windows with keyboard shortcuts.
-- Kill the current tab with a shortcut.
+### Fuzzy tab search
+One overlay searches every open tab across every window, plus recently closed sessions. Character-rank scoring with sub-millisecond match. Switch to a tab, restore a closed one, or kill the current tab without ever touching the mouse.
 
-**Commands** (type `!` to trigger)
-- `!s <query>` - web search or navigate to a domain.
-- `!b <query>` - fuzzy search bookmarks, grouped by folder.
+### Auto tab groups *(Chromium)*
+Define URL pattern rules like `https://*.github.com/*`. Matching tabs auto-group with a custom title, color, and collapsed state. Set it once, forget it.
 
-**Auto Tab Groups** *(Chrome / Edge / Opera only)*
-- URL pattern rules (e.g. `https://*.github.com/*`) auto-group matching tabs.
-- Configurable group title, color, and collapsed state per rule.
+### Commands
+- `!s <query>` - web search or jump straight to a domain
+- `!b <query>` - fuzzy-search bookmarks, grouped by folder
 
-**New Tab Page**
-- Wallpaper providers: solid color, gradient, or random photo (Picsum).
-- Widgets: clock (12h/24h), greeting, weather, quick access links.
-- Weather from Open-Meteo or wttr.in with animated weather effects.
+### New tab page
+Replaces your browser's default new tab with something useful:
+- Clock (12h / 24h) and greeting
+- Live weather via Open-Meteo or wttr.in, with animated weather effects
+- Quick-access links pulled from your most-visited sites
+- Wallpaper modes: solid color, gradient, or random photo (Picsum)
 
-**General**
-- Theme selector (Tabaru, Forest, Mocha, Midnight).
-- Inline content-script overlay - no popup required.
-- Cross-browser: Chrome, Firefox, Edge, Opera.
+### Themes
+Tabaru, Forest, Mocha, Midnight. Swap instantly, no reload.
 
+### Privacy
+Zero telemetry. No analytics. No remote backend. Everything runs locally in the browser - the only outbound calls are optional weather and wallpaper fetches you opt into.
 
+### Cross-browser
+Chrome, Firefox, Edge, Opera. Manifest V3.
 
-## Suggested Keyboard Shortcuts
+## Shortcuts
 
-- Open Search Modal: `Alt+Q`
-- Next Tab: `Alt+X`
-- Previous Tab: `Alt+Z`
+| Action | Default |
+|---|---|
+| Open search | `Alt+Q` |
+| Next tab | `Alt+X` |
+| Previous tab | `Alt+Z` |
+| Close current tab | `Alt+W` |
 
-*Note: You can customize these shortcuts in your browser's extension settings.*
+Remap any of these in your browser's extension shortcut settings.
 
-## Installation and Setup
+## Install
 
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+**Chrome / Edge / Opera** - install from the [Chrome Web Store](https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc).
 
-## Development
+**Firefox** - grab the latest `.xpi` from [GitHub Releases](https://github.com/echosonusharma/tabaru/releases/latest) and install it.
 
-Run the extension in development mode with hot-reloading:
-
-```bash
-npm run dev chrome
-npm run dev firefox
-npm run dev edge
-npm run dev opera
-```
-
-Each command writes its unpacked extension files to `dist/<browser>`, for example `dist/firefox` or `dist/edge`.
-
-## Build
-
-Compile the extension for production:
+## Build from source
 
 ```bash
-npm run build chrome
-npm run build firefox
-npm run build edge
-npm run build opera
+npm install
+npm run dev <chrome|firefox|edge|opera>     # dev with hot reload
+npm run build <chrome|firefox|edge|opera>   # production build
 ```
 
-Production builds are also written to `dist/<browser>` so each browser keeps a separate on-disk build directory.
+Output lands in `dist/<browser>`.
 
-## Release
+## License
 
-Trigger the automated versioning and release process:
-
-```bash
-npm run release
-```
-
-## Acknowledgements
-
-- Built with [WebExtension Toolbox](https://github.com/webextension-toolbox/webextension-toolbox)
-- Icons created with help of [App Icon Maker](https://appiconmaker.co/)
-- Inspired by the [Shortkeys Extension](https://github.com/crittermike/shortkeys)
-
-## Privacy
-
-Please see our [Privacy Policy](PRIVACY_POLICY.md) for details on permissions and data handling.
+MIT
