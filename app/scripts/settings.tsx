@@ -79,7 +79,9 @@ function SettingsApp() {
     <div class="settings-shell">
       <aside class="settings-sidebar">
         <div class="settings-brand">
-          <img class="settings-brand-icon" src={browser.runtime.getURL("images/tabaru-icon.svg")} alt="" />
+          <span class="settings-brand-icon-wrap">
+            <img class="settings-brand-icon" src={browser.runtime.getURL("images/tabaru-icon.svg")} alt="" />
+          </span>
           <span class="settings-brand-name">Tabaru</span>
           <span class="settings-brand-version">v{manifest.version}</span>
         </div>

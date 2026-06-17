@@ -37,10 +37,37 @@ html, body {
   text-align: center;
 }
 
+.settings-brand-icon-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+.settings-brand-icon-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -32px;
+  z-index: -1;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color-accent-rgb), 0.55) 0%,
+    rgba(var(--color-accent-rgb), 0.25) 35%,
+    rgba(var(--color-accent-rgb), 0) 70%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+}
+
 .settings-brand-icon {
   width: 48px;
   height: 48px;
   display: block;
+  position: relative;
+  z-index: 1;
 }
 
 .settings-brand-name {
