@@ -56,7 +56,6 @@ function mergeProviderSettings(settings: NewTabSettings, providerSettings: unkno
     case 'gradient': return { ...settings, gradient: providerSettings as any };
     case 'picsum': return { ...settings, picsum: providerSettings as any };
   }
-  return settings;
 }
 
 // ─── NewTabPage ───────────────────────────────────────────────────────────────
