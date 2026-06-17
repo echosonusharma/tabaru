@@ -1,6 +1,5 @@
-import { logger } from "../../utils";
 import { commandHistoryStore } from "./stores";
-import { handleSearch } from "./tabs";
+import { dispatchCommand } from "./commands/backend/dispatch";
 
 const MAX_COMMAND_HISTORY = 5;
 
@@ -16,18 +15,4 @@ export async function getCommandHistory(commandKey: string): Promise<string[]> {
   return history[commandKey] ?? [];
 }
 
-export async function handleExecuteCommand(commandKey: string, keyword: string): Promise<boolean> {
-  try {
-    switch (commandKey) {
-      case "s": {
-        return await handleSearch(keyword);
-      }
-      default:
-        logger(`Unknown command key: ${commandKey}`);
-        return false;
-    }
-  } catch (error) {
-    logger(`Error executing command '${commandKey}':`, error);
-    return false;
-  }
-}
+export const handleExecuteCommand = dispatchCommand;

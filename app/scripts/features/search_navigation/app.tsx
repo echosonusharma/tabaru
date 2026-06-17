@@ -4,38 +4,58 @@ import { memo } from "preact/compat";
 import browser from "webextension-polyfill";
 import { useEffect, useState, useRef, useMemo } from "preact/hooks";
 import { broadcastMsgToServiceWorker, looksLikeDomain } from "../../utils";
-import { SearchableTab, CommandDefinition, BookmarkItem } from "../../types";
+import { SearchableTab, BookmarkItem } from "../../types";
 import { SearchIcon, CommandIcon, HistoryIcon, WindowIcon } from "../../icons";
+import { CommandMeta } from "./commands/types";
+import { COMMANDS, COMMAND_MAP } from "./commands/registry";
 
-// command prefix will be ! and second char is the type of command
-// commands can only be 2 chars
 const COMMAND_PREFIX = "!";
 
-const COMMANDS: CommandDefinition[] = [
-  {
-    key: "s",
-    label: "Search",
-    description: "Search the web or navigate to a domain",
-    execute: (keyword: string) => {
-      broadcastMsgToServiceWorker({
-        action: "executeCommand",
-        data: { commandKey: "s", keyword },
-      }).catch(console.error);
-    },
-  },
-  {
-    key: "b",
-    label: "Bookmarks",
-    description: "Search through your bookmarks",
-    execute: () => {
-      // Bookmark selection is handled directly by the UI (not by a keyword execute)
-    },
-  },
-];
+/**
+ * Parse the search query into an active command and its keyword.
+ * Activation rules:
+ *   - Keyword commands (`!s foo`): trailing space required after key.
+ *   - No-keyword commands (`!dup`): activate on exact match, no space needed.
+ */
+function parseActiveCommand(query: string): { command: CommandMeta; keyword: string } | null {
+  if (!query.startsWith(COMMAND_PREFIX)) return null;
+  const rest = query.slice(COMMAND_PREFIX.length);
+  const spaceIdx = rest.indexOf(" ");
 
-const COMMAND_MAP = new Map<string, CommandDefinition>(
-  COMMANDS.map((cmd) => [cmd.key, cmd])
-);
+  if (spaceIdx < 0) {
+    const cmd = COMMAND_MAP.get(rest);
+    if (cmd && cmd.requiresKeyword === false) {
+      return { command: cmd, keyword: "" };
+    }
+    return null;
+  }
+
+  const key = rest.slice(0, spaceIdx);
+  const cmd = COMMAND_MAP.get(key);
+  if (!cmd) return null;
+  const keyword = cmd.requiresKeyword === false ? "" : rest.slice(spaceIdx + 1);
+  return { command: cmd, keyword };
+}
+
+/** Clamp input to `!key` for no-keyword commands — block any text past the key. */
+function clampQuery(raw: string): string {
+  if (!raw.startsWith(COMMAND_PREFIX)) return raw;
+  const rest = raw.slice(COMMAND_PREFIX.length);
+  const spaceIdx = rest.indexOf(" ");
+  const key = spaceIdx < 0 ? rest : rest.slice(0, spaceIdx);
+  const cmd = COMMAND_MAP.get(key);
+  if (cmd && cmd.requiresKeyword === false) {
+    return `${COMMAND_PREFIX}${key}`;
+  }
+  return raw;
+}
+
+function dispatchExecuteCommand(commandKey: string, keyword: string) {
+  broadcastMsgToServiceWorker({
+    action: "executeCommand",
+    data: { commandKey, keyword },
+  }).catch(console.error);
+}
 
 const faviconCache = new Map<string, string>();
 const faviconInFlight = new Map<string, Promise<string>>();
@@ -136,7 +156,9 @@ const TabComponent = memo(function TabComponent({ tab }: { tab: SearchableTab })
 });
 
 
-function KeyboardHints({ mode }: { mode: "bookmark" | "command" | "suggest" | "normal" }) {
+type HintMode = "bookmark" | "command" | "action" | "suggest" | "normal";
+
+function KeyboardHints({ mode }: { mode: HintMode }) {
   return (
     <div className="keyboard-hint">
       {mode === "bookmark" && (
@@ -150,6 +172,12 @@ function KeyboardHints({ mode }: { mode: "bookmark" | "command" | "suggest" | "n
         <Fragment>
           <span><kbd>↑</kbd> <kbd>↓</kbd> history</span>
           <span><kbd>↵</kbd> execute</span>
+          <span><kbd>esc</kbd> close</span>
+        </Fragment>
+      )}
+      {mode === "action" && (
+        <Fragment>
+          <span><kbd>↵</kbd> run</span>
           <span><kbd>esc</kbd> close</span>
         </Fragment>
       )}
@@ -179,31 +207,10 @@ function useSearch() {
   const [recentCommands, setRecentCommands] = useState<string[]>([]);
   const [bookmarkResults, setBookmarkResults] = useState<BookmarkItem[]>([]);
 
-  const activeCommand = useMemo(() => {
-    const sq = searchQuery.trim();
-    if (!sq.startsWith(COMMAND_PREFIX)) {
-      return null;
-    }
-
-    if (sq.length < 3) {
-      return null;
-    }
-
-    const cmdChar = sq[1];
-    if (sq[2] !== " ") {
-      return null;
-    }
-
-    const cmd = COMMAND_MAP.get(cmdChar);
-    if (cmd) {
-      return { command: cmd, keyword: sq.slice(3) };
-    }
-
-    return null;
-  }, [searchQuery]);
+  const activeCommand = useMemo(() => parseActiveCommand(searchQuery), [searchQuery]);
 
   const isCommandMode = activeCommand !== null;
-  const isBookmarkMode = activeCommand?.command.key === "b";
+  const isBookmarkMode = activeCommand?.command.custom === true && activeCommand.command.key === "b";
   const isSuggestingCommands = !isCommandMode && searchQuery.startsWith(COMMAND_PREFIX);
 
   const commandSuggestions = useMemo(() => {
@@ -211,7 +218,8 @@ function useSearch() {
       return [];
     }
 
-    const filter = searchQuery.trim().slice(1).toLowerCase();
+    const filter = searchQuery.slice(COMMAND_PREFIX.length).toLowerCase();
+    if (!filter) return COMMANDS;
     return COMMANDS.filter(c => c.key.startsWith(filter) || c.label.toLowerCase().includes(filter));
   }, [isSuggestingCommands, searchQuery]);
 
@@ -224,7 +232,9 @@ function useSearch() {
   useEffect(() => {
     if (isCommandMode || isSuggestingCommands) {
       setFilteredTabs([]);
-      setSelectedIndex(isBookmarkMode ? 0 : isCommandMode ? -1 : 0);
+      let initial = 0;
+      if (isCommandMode && !isBookmarkMode) initial = -1;
+      setSelectedIndex(initial);
       return;
     }
 
@@ -248,7 +258,7 @@ function useSearch() {
   }, [searchQuery, tabs, isCommandMode, isSuggestingCommands, isBookmarkMode]);
 
   useEffect(() => {
-    if (!activeCommand || activeCommand.command.key === "b") {
+    if (!activeCommand || activeCommand.command.custom || activeCommand.command.requiresKeyword === false) {
       setRecentCommands([]);
       return;
     }
@@ -298,37 +308,43 @@ function CommandModeBody({
   resultsRef,
   onSelectRecent,
 }: {
-  activeCommand: { command: CommandDefinition; keyword: string };
+  activeCommand: { command: CommandMeta; keyword: string };
   recentCommands: string[];
   selectedIndex: number;
   resultsRef: preact.RefObject<HTMLUListElement>;
   onSelectRecent: (keyword: string) => void;
 }) {
+  const cmd = activeCommand.command;
   const keyword = activeCommand.keyword.trim();
-  const hasContent = keyword || recentCommands.length > 0;
+  const canRunWithoutKeyword = cmd.requiresKeyword === false;
+  const hasContent = keyword || recentCommands.length > 0 || canRunWithoutKeyword;
 
   if (!hasContent) {
     return (
       <div className="command-panel">
         <div className="command-panel-icon"><CommandIcon /></div>
         <div className="command-panel-info">
-          <span className="command-panel-desc">{activeCommand.command.description}</span>
+          <span className="command-panel-desc">{cmd.description}</span>
         </div>
         <span className="command-panel-hint">Type a keyword to continue</span>
       </div>
     );
   }
 
+  let previewAction = cmd.label;
+  if (cmd.key === "s") {
+    previewAction = looksLikeDomain(keyword) ? "Navigate to" : "Search the web for";
+  }
+  const previewLabel = keyword || cmd.description;
+
   return (
     <Fragment>
-      {keyword && (
+      {(keyword || canRunWithoutKeyword) && (
         <div className={`command-preview${selectedIndex >= 0 ? " command-preview-dimmed" : ""}`}>
           <div className="command-panel-icon"><CommandIcon /></div>
           <div className="command-preview-text">
-            <span className="command-preview-action">
-              {looksLikeDomain(keyword) ? "Navigate to" : "Search the web for"}
-            </span>
-            <span className="command-preview-keyword">{keyword}</span>
+            <span className="command-preview-action">{previewAction}</span>
+            <span className="command-preview-keyword">{previewLabel}</span>
           </div>
           <kbd className="command-preview-enter">↵</kbd>
         </div>
@@ -501,8 +517,9 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     }
   }, [selectedIndex, filteredTabs.length, commandSuggestions.length, bookmarkResults.length, isSuggestingCommands, isCommandMode, isBookmarkMode]);
 
-  const selectCommand = (cmd: CommandDefinition) => {
-    setSearchQuery(`${COMMAND_PREFIX}${cmd.key} `);
+  const selectCommand = (cmd: CommandMeta) => {
+    const suffix = cmd.requiresKeyword === false ? "" : " ";
+    setSearchQuery(`${COMMAND_PREFIX}${cmd.key}${suffix}`);
     setSelectedIndex(0);
   };
 
@@ -511,11 +528,13 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
   };
 
   const executeCommand = (cmdKey: string, keyword: string) => {
-    broadcastMsgToServiceWorker({
-      action: "recordCommand",
-      data: { commandKey: cmdKey, keyword },
-    }).catch(console.error);
-    activeCommand!.command.execute(keyword);
+    if (keyword) {
+      broadcastMsgToServiceWorker({
+        action: "recordCommand",
+        data: { commandKey: cmdKey, keyword },
+      }).catch(console.error);
+    }
+    dispatchExecuteCommand(cmdKey, keyword);
     if (onClose) onClose();
   };
 
@@ -528,13 +547,16 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    const maxIndex = isBookmarkMode
-      ? bookmarkResults.length - 1
-      : isCommandMode
-      ? recentCommands.length - 1
-      : isSuggestingCommands
-      ? commandSuggestions.length - 1
-      : filteredTabs.length - 1;
+    let maxIndex: number;
+    if (isBookmarkMode) {
+      maxIndex = bookmarkResults.length - 1;
+    } else if (isCommandMode) {
+      maxIndex = recentCommands.length - 1;
+    } else if (isSuggestingCommands) {
+      maxIndex = commandSuggestions.length - 1;
+    } else {
+      maxIndex = filteredTabs.length - 1;
+    }
 
     switch (e.key) {
       case "Escape":
@@ -559,11 +581,14 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
           const bookmark = bookmarkResults[selectedIndex];
           if (bookmark) openBookmark(bookmark);
         } else if (isCommandMode) {
+          const cmd = activeCommand!.command;
           if (selectedIndex >= 0 && recentCommands[selectedIndex]) {
-            executeCommand(activeCommand!.command.key, recentCommands[selectedIndex]);
+            executeCommand(cmd.key, recentCommands[selectedIndex]);
           } else {
             const keyword = activeCommand!.keyword.trim();
-            if (keyword) executeCommand(activeCommand!.command.key, keyword);
+            if (keyword || cmd.requiresKeyword === false) {
+              executeCommand(cmd.key, keyword);
+            }
           }
         } else if (isSuggestingCommands) {
           const cmd = commandSuggestions[selectedIndex] ?? commandSuggestions[0];
@@ -591,7 +616,14 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     e.stopPropagation();
   };
 
-  const mode = isBookmarkMode ? "bookmark" : isCommandMode ? "command" : isSuggestingCommands ? "suggest" : "normal";
+  let mode: HintMode = "normal";
+  if (isBookmarkMode) {
+    mode = "bookmark";
+  } else if (isCommandMode) {
+    mode = activeCommand!.command.requiresKeyword === false ? "action" : "command";
+  } else if (isSuggestingCommands) {
+    mode = "suggest";
+  }
 
   return (
     <div id="tabaru-content">
@@ -603,7 +635,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
           className={`search-input${isCommandMode ? " command-active" : ""}`}
           placeholder="Search tabs, or type ! for commands..."
           value={searchQuery}
-          onInput={(e) => { setSearchQuery((e.target as HTMLInputElement).value); setHasNavigated(false); }}
+          onInput={(e) => { setSearchQuery(clampQuery((e.target as HTMLInputElement).value)); setHasNavigated(false); }}
           onKeyDown={handleKeyDown}
         />
         <button className="close-button" onClick={() => onClose && onClose()}>×</button>

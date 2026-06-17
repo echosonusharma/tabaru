@@ -83,13 +83,3 @@ export interface BookmarkItem {
   dateAdded?: number;
 }
 
-export interface CommandDefinition {
-  /** Single-character trigger, e.g. "s" */
-  key: string;
-  /** Human-readable label shown in the UI badge */
-  label: string;
-  /** Short description of what this command does */
-  description: string;
-  /** Action performed by the background script */
-  execute: (keyword: string) => void;
-}
