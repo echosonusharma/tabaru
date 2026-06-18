@@ -11,6 +11,7 @@ import semver from 'semver';
 
 const PATH_TO_MANIFEST = './app/manifest.json';
 const PATH_TO_PACKAGE = './package.json';
+const PATH_TO_WEBSITE = './web/index.html';
 
 (async () => {
   try {
@@ -47,9 +48,14 @@ const PATH_TO_PACKAGE = './package.json';
     pkg.version = newVersion;
     writeFileSync(PATH_TO_PACKAGE, JSON.stringify(pkg, null, 2) + '\n', { encoding: 'utf-8' });
 
+    // Update website hero badge
+    const html = readFileSync(PATH_TO_WEBSITE, { encoding: 'utf-8' });
+    const updatedHtml = html.replace(/v\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(?=\s*&nbsp;·&nbsp;\s*open source)/, `v${newVersion}`);
+    writeFileSync(PATH_TO_WEBSITE, updatedHtml, { encoding: 'utf-8' });
+
     // create git tag
     const tagName = `v${newVersion}`;
-    execSync(`git add ${PATH_TO_MANIFEST} ${PATH_TO_PACKAGE}`);
+    execSync(`git add ${PATH_TO_MANIFEST} ${PATH_TO_PACKAGE} ${PATH_TO_WEBSITE}`);
     execSync(`git commit -m "release: bump version to ${newVersion}"`);
     execSync(`git push origin`);
     execSync(`git tag ${tagName}`);
