@@ -5,6 +5,6 @@ export const bookmarksMeta: CommandMeta = {
   key: "b",
   label: "Bookmarks",
   description: "Search through your bookmarks",
-  requiresKeyword: false,
+  requiresKeyword: true,
   custom: true,
 };
