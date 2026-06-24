@@ -9,6 +9,7 @@ html, body, #app {
   height: 100%;
   overflow: hidden;
   font-family: 'Outfit', system-ui, sans-serif;
+  background: #0d1117;
 }
 
 .nt-page {
@@ -42,6 +43,12 @@ html, body, #app {
   width: 100%;
   height: 100%;
   display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.nt-background-gol.nt-gol-ready {
+  opacity: 1;
 }
 
 .nt-overlay {
@@ -49,6 +56,7 @@ html, body, #app {
   inset: 0;
   z-index: 1;
   background: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 .nt-effects-canvas {

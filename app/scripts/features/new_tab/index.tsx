@@ -65,7 +65,7 @@ function mergeProviderSettings(settings: NewTabSettings, providerSettings: unkno
 
 
 export function NewTabPage() {
-  const [settings, setSettings] = useState<NewTabSettings | null>(null);
+  const [settings, setSettings] = useState<NewTabSettings>(DEFAULT_NEW_TAB_SETTINGS);
   const [navOffset, setNavOffset] = useState(0);
   const [paused, setPaused] = useState(false);
   const [weatherEffect, setWeatherEffect] = useState<EffectId>('none');
@@ -95,8 +95,6 @@ export function NewTabPage() {
     browser.storage.onChanged.addListener(handler);
     return () => browser.storage.onChanged.removeListener(handler);
   }, []);
-
-  if (!settings) return null;
 
   const provider = getProvider(settings.activeProvider);
   const providerSettings = getProviderSettings(settings);

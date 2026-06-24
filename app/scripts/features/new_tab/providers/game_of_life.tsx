@@ -176,14 +176,53 @@ export function GameOfLifeBackground({ settings }: { settings: GameOfLifeSetting
       raf = requestAnimationFrame(tick);
     };
 
+    let dragState: 0 | 1 | null = null; // null = not dragging, 0/1 = painting dead/alive
+
+    const cellAt = (e: MouseEvent): number => {
+      const rect = canvas.getBoundingClientRect();
+      const col = Math.floor((e.clientX - rect.left) / cellSize);
+      const row = Math.floor((e.clientY - rect.top) / cellSize);
+      if (col < 0 || col >= cols || row < 0 || row >= rows) return -1;
+      return row * cols + col;
+    };
+
+    const onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      const idx = cellAt(e);
+      if (idx < 0) return;
+      dragState = curr[idx] ? 0 : 1;
+      curr[idx] = dragState;
+      fullRepaint = true;
+      draw();
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (dragState === null || !(e.buttons & 1)) { dragState = null; return; }
+      const idx = cellAt(e);
+      if (idx < 0) return;
+      if (curr[idx] === dragState) return;
+      curr[idx] = dragState;
+      fullRepaint = true;
+      draw();
+    };
+
+    const onMouseUp = () => { dragState = null; };
+
     resize();
     draw();
+    canvas.classList.add('nt-gol-ready');
     raf = requestAnimationFrame(tick);
     window.addEventListener('resize', resize);
+    canvas.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
     };
   }, [settings.cellSize, settings.density]);
 
