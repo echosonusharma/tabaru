@@ -6,7 +6,28 @@ export type FaviconEntry = { data: string; timestamp: number };
 
 let faviconMemoryCache: Record<string, FaviconEntry> | null = null;
 
+function isPrivateOrLocalUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    if (hostname === "localhost") return true;
+    const ipv4 = hostname.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+    if (ipv4) {
+      const [, a, b] = ipv4.map(Number);
+      if (a === 10) return true;
+      if (a === 127) return true;
+      if (a === 192 && b === 168) return true;
+      if (a === 172 && b >= 16 && b <= 31) return true;
+    }
+    if (hostname === "::1" || hostname === "[::1]") return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export async function handleFetchFavicon(iconUrl: string): Promise<string> {
+  if (isPrivateOrLocalUrl(iconUrl)) return "";
+
   const now = Date.now();
 
   if (!faviconMemoryCache) {

@@ -77,7 +77,7 @@
     },
     "open_and_close_search": {
       "suggested_key": {
-        "default": "Alt+S"
+        "default": "Alt+Q"
       },
       "description": "tab: search open & close modal"
     },

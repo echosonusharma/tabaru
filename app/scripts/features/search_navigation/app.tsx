@@ -73,12 +73,12 @@ async function getFavicon(iconUrl: string | undefined): Promise<string> {
         action: "fetchFavicon",
         data: { iconUrl }
       });
-      const resolved = (result as string) || iconUrl;
+      const resolved = (result as string) || "";
       faviconCache.set(iconUrl, resolved);
       return resolved;
     } catch {
-      faviconCache.set(iconUrl, iconUrl);
-      return iconUrl;
+      faviconCache.set(iconUrl, "");
+      return "";
     } finally {
       faviconInFlight.delete(iconUrl);
     }
@@ -109,7 +109,7 @@ function FaviconImg({ favIconUrl, className = "tab-favicon" }: { favIconUrl?: st
     }
     const cached = faviconCache.get(favIconUrl);
     if (cached !== undefined) {
-      setIconUrl(cached);
+      setIconUrl(cached || fallbackIconUrl);
       return;
     }
     let cancelled = false;
