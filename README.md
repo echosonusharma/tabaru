@@ -20,7 +20,7 @@
 ## Features
 
 ### Fuzzy tab search
-One overlay searches every open tab across every window, plus recently closed sessions. Character-rank scoring with sub-millisecond match. Switch to a tab, restore a closed one, or kill the current tab without ever touching the mouse.
+One overlay searches every open tab across every window, plus recently closed sessions. Character-rank scoring with sub-millisecond match. Switch to a tab, restore a closed one, kill the current tab, or reorder tabs left/right without ever touching the mouse.
 
 ### Auto tab groups *(Chromium)*
 Define URL pattern rules like `https://*.github.com/*`. Matching tabs auto-group with a custom title, color, and collapsed state. Set it once, forget it.
@@ -57,8 +57,12 @@ Chrome, Firefox, Edge, Opera. Manifest V3.
 | Next tab | `Alt+X` |
 | Previous tab | `Alt+Z` |
 | Close current tab | `Alt+W` |
+| Move tab left | custom |
+| Move tab right | custom |
+| Next window | custom |
+| Previous window | custom |
 
-Remap any of these in your browser's extension shortcut settings.
+All shortcuts are suggestions. Remap any of them in your browser's extension shortcut settings.
 
 ## Install
 
