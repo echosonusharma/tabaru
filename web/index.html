@@ -194,6 +194,7 @@
         <li>Switch to any open tab instantly</li>
         <li>Restore recently closed tabs and windows</li>
         <li>Close the current tab without touching the mouse</li>
+        <li>Reorder tabs left or right with a keypress (wraps around, skips pinned)</li>
       </ul>
     </div>
 
@@ -214,7 +215,7 @@
     <div class="f-card">
       <span class="f-tag">Appearance</span>
       <h3>Themes</h3>
-      <p>Four built-in themes. Swap instantly from settings — no reload required.</p>
+      <p>Four built-in themes. Swap instantly from settings, no reload required.</p>
       <div class="theme-swatches">
         <div class="theme-swatch"><span class="swatch-dot" style="background:#cfa738"></span>Tabaru</div>
         <div class="theme-swatch"><span class="swatch-dot" style="background:#7faa3a"></span>Forest</div>
@@ -241,8 +242,8 @@
       <h3>Save &amp; restore sessions</h3>
       <p>Snapshot any window's tabs under a name. Restore in a new window anytime. Browse recently closed tabs from the same overlay.</p>
       <ul class="f-list">
-        <li><code>!sv work</code> — snapshot current window</li>
-        <li><code>!op work</code> — restore in a new window</li>
+        <li><code>!sv work</code> snapshot current window</li>
+        <li><code>!op work</code> restore in a new window</li>
       </ul>
     </div>
 
@@ -266,7 +267,7 @@
       <span class="cmd-badge">!s</span>
       <div>
         <div class="cmd-title">Web search</div>
-        <div class="cmd-desc">Search the web or navigate directly to a domain — no new tab needed.</div>
+        <div class="cmd-desc">Search the web or navigate directly to a domain, no new tab needed.</div>
         <span class="cmd-ex">!s rust async book</span>
       </div>
     </div>
@@ -318,7 +319,7 @@
   <div class="section-head">
     <div class="section-label">Keyboard</div>
     <h2 class="section-title">All the keys, none of the mouse</h2>
-    <p class="section-sub">Defaults shown. Remap any of them via your browser's extension shortcut settings.</p>
+    <p class="section-sub">Suggested defaults shown. Every shortcut, including <kbd>Alt</kbd><kbd>Q</kbd>, is fully remappable via your browser's extension shortcut settings.</p>
   </div>
 
   <div class="kbd-grid">
@@ -337,6 +338,14 @@
     <div class="kbd-row">
       <span class="label">Close current tab</span>
       <span class="kbd-group"><kbd>Alt</kbd><kbd>W</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Move tab left</span>
+      <span class="kbd-group"><kbd>custom</kbd></span>
+    </div>
+    <div class="kbd-row">
+      <span class="label">Move tab right</span>
+      <span class="kbd-group"><kbd>custom</kbd></span>
     </div>
     <div class="kbd-row">
       <span class="label">Next window</span>
