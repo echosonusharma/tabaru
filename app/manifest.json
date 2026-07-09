@@ -69,35 +69,41 @@
     }
   ],
   "commands": {
+    "kill_tab": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "tab: close current tab"
+    },
+    "open_and_close_search": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "tab: search open & close modal"
+    },
+    "move_tab_left": {
+      "description": "tab: move left"
+    },
+    "move_tab_right": {
+      "description": "tab: move right"
+    },
     "next_tab": {
       "suggested_key": {
         "default": "Alt+X"
       },
-      "description": "move to next tab"
+      "description": "tab: next"
     },
     "prev_tab": {
       "suggested_key": {
         "default": "Alt+Z"
       },
-      "description": "move to previous tab"
+      "description": "tab: previous"
     },
     "next_win": {
-      "description": "move to next window"
+      "description": "window: next"
     },
     "prev_win": {
-      "description": "move to previous window"
-    },
-    "open_and_close_search": {
-      "suggested_key": {
-        "default": "Alt+Q"
-      },
-      "description": "open and close tab search modal"
-    },
-    "kill_tab": {
-      "suggested_key": {
-        "default": "Alt+W"
-      },
-      "description": "close the current tab"
+      "description": "window: previous"
     }
   }
 }

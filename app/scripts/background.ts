@@ -303,6 +303,10 @@ browser.commands.onCommand.addListener(async (command: string) => {
       case "kill_tab":
         await browser.tabs.remove(activeTabId);
         break;
+      case "move_tab_left":
+      case "move_tab_right":
+        await handleMoveTabCmd(command === "move_tab_right" ? 1 : -1, activeTabId, activeWindowId);
+        break;
     }
   } catch (err) {
     logger("Error handling command:", err);
@@ -366,6 +370,25 @@ async function handleWindowMoveCmd(
     await browser.windows.update(Number(windowIds[newIndex]), { focused: true });
   } catch (error) {
     logger(`Error in handleWindowMoveCmd:`, error);
+  }
+}
+
+async function handleMoveTabCmd(direction: 1 | -1, activeTabId: number, activeWindowId: number): Promise<void> {
+  try {
+    const tabs = await browser.tabs.query({ windowId: activeWindowId });
+    tabs.sort((a, b) => a.index - b.index);
+    const activeTab = tabs.find((t) => t.id === activeTabId);
+    if (!activeTab || activeTab.pinned) return;
+
+    const pinnedCount = tabs.filter((t) => t.pinned).length;
+    const rangeSize = tabs.length - pinnedCount;
+    if (rangeSize <= 1) return;
+
+    const positionInRange = activeTab.index - pinnedCount;
+    const newPositionInRange = (positionInRange + direction + rangeSize) % rangeSize;
+    await browser.tabs.move(activeTabId, { index: pinnedCount + newPositionInRange });
+  } catch (error) {
+    logger(`Error in handleMoveTabCmd:`, error);
   }
 }
 
