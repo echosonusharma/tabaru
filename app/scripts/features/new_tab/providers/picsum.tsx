@@ -7,6 +7,18 @@ import type { PicsumSettings } from '../types';
 const SESSION_SEED = `s${Date.now()}`;
 const PREFETCH_KEY = 'picsum_prefetch_v1';
 const QUOTA_KEY = 'picsum_quota_v1';
+export const PICSUM_NAV_OFFSET_KEY = 'picsum_nav_offset_v1';
+
+export function readNavOffset(): number {
+  try {
+    const raw = localStorage.getItem(PICSUM_NAV_OFFSET_KEY);
+    return raw ? Number(raw) : 0;
+  } catch { return 0; }
+}
+
+export function writeNavOffset(offset: number): void {
+  try { localStorage.setItem(PICSUM_NAV_OFFSET_KEY, String(offset)); } catch {}
+}
 const DAILY_CAP = 100; // soft cap on unique image fetches per UTC day
 
 interface PrefetchEntry { current: string; next: string; bucket: number; }

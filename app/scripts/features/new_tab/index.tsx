@@ -7,7 +7,7 @@ import { ClockWidget } from './widgets/clock';
 import { GreetingWidget } from './widgets/greeting';
 import { WeatherWidget } from './widgets/weather';
 import { QuickAccessBar } from './widgets/quick_access';
-import { PicsumBackground } from './providers/picsum';
+import { PicsumBackground, readNavOffset, writeNavOffset } from './providers/picsum';
 import { EffectsCanvas } from './effects';
 import { themeStore, getTheme, applyRootTheme, DEFAULT_THEME_ID, ThemeId } from '../theme';
 import type {
@@ -66,7 +66,7 @@ function mergeProviderSettings(settings: NewTabSettings, providerSettings: unkno
 
 export function NewTabPage() {
   const [settings, setSettings] = useState<NewTabSettings>(DEFAULT_NEW_TAB_SETTINGS);
-  const [navOffset, setNavOffset] = useState(0);
+  const [navOffset, setNavOffset] = useState(() => readNavOffset());
   const [paused, setPaused] = useState(false);
   const [weatherEffect, setWeatherEffect] = useState<EffectId>('none');
 
@@ -129,7 +129,7 @@ export function NewTabPage() {
       </div>
       {showNavControls && (
         <div class="nt-nav-controls">
-          <button class="nt-nav-btn" onClick={() => setNavOffset(o => o - 1)} title="Previous">
+          <button class="nt-nav-btn" onClick={() => setNavOffset(o => { const n = o - 1; writeNavOffset(n); return n; })} title="Previous">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
@@ -140,7 +140,7 @@ export function NewTabPage() {
               : <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></svg>
             }
           </button>
-          <button class="nt-nav-btn" onClick={() => setNavOffset(o => o + 1)} title="Next">
+          <button class="nt-nav-btn" onClick={() => setNavOffset(o => { const n = o + 1; writeNavOffset(n); return n; })} title="Next">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
