@@ -6,9 +6,7 @@ import { SearchApp } from "./features/search_navigation/app";
 import { themeStore, getTheme, buildContentThemeCSS, DEFAULT_THEME_ID } from "./features/theme";
 
 // Guard against double-injection (manifest + one-time executeScript bootstrap).
-if ((window as any).__tabaruContentLoaded) {
-  // Already running — nothing to do.
-} else {
+if (!(window as any).__tabaruContentLoaded) {
 (window as any).__tabaruContentLoaded = true;
 
 const CONTAINER_SELECTOR = "div[data-tabaru-container]";
