@@ -9,7 +9,6 @@ export const wasmReadyPromise = initWasmModule()
   .catch((e: Error) => logger(`Error in wasm module init:`, e));
 
 // --- Constants ---
-export const PATH_TO_CONTENT_SCRIPT: string = "scripts/content.js";
 export const NO_OF_RECENT_TABS = 6;
 export const BOOKMARK_RESULT_LIMIT = 50;
 

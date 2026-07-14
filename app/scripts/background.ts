@@ -127,12 +127,6 @@ browser.runtime.onMessage.addListener(
       case "groupTabsByRule":
         return await groupTabsForRuleNow(msg.data.ruleId);
 
-      case "getOpenAndCloseShortcut": {
-        const cmds = await browser.commands.getAll();
-        const cmd = cmds.find((c) => c.name === "open_and_close_search");
-        return cmd?.shortcut ?? null;
-      }
-
       case "listSavedSessions":
         return await listSavedSessionNames();
 

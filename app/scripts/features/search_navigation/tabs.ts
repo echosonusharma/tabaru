@@ -7,7 +7,6 @@ import {
   activeTabIdStore,
   activeWindowIdStore,
   NO_OF_RECENT_TABS,
-  PATH_TO_CONTENT_SCRIPT,
   searchPopupConnections,
   searchTabStore,
   tabsStore,
@@ -202,22 +201,29 @@ export async function handleSearchCmd(activeTabId: number, activeWindowId: numbe
     return;
   }
 
-  // sendMessage returns true when overlay is open (messageListener responds).
-  // When overlay is closed the listener is removed - polyfill resolves undefined (not throws),
-  // so we check the return value instead of relying on catch.
+  // Try to close if already open. Throws when content script not present on tab
+  // (pre-existing tab before extension reload — manifest only injects into new tabs).
   let closed: unknown;
   try {
     closed = await browser.tabs.sendMessage(activeTabId, { action: "closeSearchTab" });
   } catch {
-    // Tab has no content script at all - fall through to inject.
+    // No content script — bootstrap via executeScript, then open.
+    try {
+      await browser.scripting.executeScript({
+        target: { tabId: activeTabId },
+        files: ["scripts/content.js"],
+      });
+      await browser.tabs.sendMessage(activeTabId, { action: "openSearch" });
+    } catch (error) {
+      logger(`Error in handleSearchCmd, falling back to popup:`, error);
+      await openPopupFallback(activeWindowId);
+    }
+    return;
   }
 
   if (!closed) {
     try {
-      await browser.scripting.executeScript({
-        target: { tabId: activeTabId },
-        files: [PATH_TO_CONTENT_SCRIPT],
-      });
+      await browser.tabs.sendMessage(activeTabId, { action: "openSearch" });
     } catch (error) {
       logger(`Error in handleSearchCmd, falling back to popup:`, error);
       await openPopupFallback(activeWindowId);

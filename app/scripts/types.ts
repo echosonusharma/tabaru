@@ -19,6 +19,7 @@ export type TabData = Record<number, number[]>;
 
 export type ExtensionMessage =
   | { action: "getCurrentWindowId" }
+  | { action: "openSearch" }
   | { action: "closeSearchTab" }
   | { action: "switchToTab"; data: { tabId: number; windowId?: number } }
   | { action: "restoreRecentlyClosed"; data: { sessionId: string } }
@@ -31,7 +32,6 @@ export type ExtensionMessage =
   | { action: "searchBookmarks"; data: { searchKeyword: string } }
   | { action: "openBookmark"; data: { url: string } }
   | { action: "groupTabsByRule"; data: { ruleId: string } }
-  | { action: "getOpenAndCloseShortcut" }
   | { action: "closePopup" }
   | { action: "fetchWeather"; data: { provider: 'open-meteo' | 'wttr'; city: string; unit: 'C' | 'F' } }
   | { action: "listSavedSessions" }
