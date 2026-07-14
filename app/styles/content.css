@@ -666,3 +666,81 @@
 #tabaru-content .bookmark-item:hover {
   background: hsla(var(--folder-hue, 200), 55%, 52%, 0.06) !important;
 }
+
+/* Math expression result */
+#tabaru-content .math-result {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 9px 12px !important;
+  margin: 0 0 2px 0 !important;
+  background: transparent !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: background 0.1s ease !important;
+  position: relative !important;
+  animation: tab-in 0.15s ease-out backwards !important;
+}
+
+#tabaru-content .math-result::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 4px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 2px !important;
+  height: 14px !important;
+  background: var(--t-accent) !important;
+  border-radius: 1px !important;
+  opacity: 0.7 !important;
+}
+
+#tabaru-content .math-result:hover {
+  background: rgba(var(--t-accent-rgb), 0.07) !important;
+}
+
+#tabaru-content .math-result.selected {
+  background: rgba(var(--t-accent-rgb), 0.12) !important;
+}
+
+#tabaru-content .math-result.selected::before {
+  opacity: 1 !important;
+}
+
+#tabaru-content .math-result-icon {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--t-accent) !important;
+  min-width: 20px !important;
+  text-align: center !important;
+  font-family: monospace !important;
+  flex-shrink: 0 !important;
+}
+
+#tabaru-content .math-result-expr {
+  font-size: 13px !important;
+  color: var(--t-muted) !important;
+  font-family: monospace !important;
+  flex-shrink: 0 !important;
+}
+
+#tabaru-content .math-result-eq {
+  font-size: 13px !important;
+  color: var(--t-muted) !important;
+  flex-shrink: 0 !important;
+}
+
+#tabaru-content .math-result-value {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--t-fg) !important;
+  font-family: monospace !important;
+}
+
+#tabaru-content .math-result-copied {
+  margin-left: auto !important;
+  font-size: 11px !important;
+  color: var(--t-accent) !important;
+  opacity: 0.75 !important;
+  letter-spacing: 0.3px !important;
+}

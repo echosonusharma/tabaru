@@ -8,6 +8,7 @@ import { SearchableTab, BookmarkItem } from "../../types";
 import { SearchIcon, CommandIcon, HistoryIcon, WindowIcon } from "../../icons";
 import { CommandMeta } from "./commands/types";
 import { COMMANDS, COMMAND_MAP } from "./commands/registry";
+import { getMathResult } from "./math";
 
 const COMMAND_PREFIX = "!";
 
@@ -213,6 +214,11 @@ function useSearch() {
   const isBookmarkMode = activeCommand?.command.custom === true && activeCommand.command.key === "b";
   const isSuggestingCommands = !isCommandMode && searchQuery.startsWith(COMMAND_PREFIX);
 
+  const mathResult = useMemo(() => {
+    if (isCommandMode || isSuggestingCommands) return null;
+    return getMathResult(searchQuery);
+  }, [searchQuery, isCommandMode, isSuggestingCommands]);
+
   const commandSuggestions = useMemo(() => {
     if (!isSuggestingCommands) {
       return [];
@@ -302,6 +308,7 @@ function useSearch() {
     recentCommands,
     bookmarkResults,
     refetchRecents,
+    mathResult,
   };
 }
 
@@ -505,32 +512,43 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     recentCommands,
     bookmarkResults,
     refetchRecents,
+    mathResult,
   } = useSearch();
+
+  const [mathCopied, setMathCopied] = useState(false);
+  const mathCopiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [hasNavigated, setHasNavigated] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
+  const mathRowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => searchInputRef.current?.focus(), []);
 
   useEffect(() => {
-    if (!resultsRef.current) return;
     if (isBookmarkMode) {
-      if (bookmarkResults.length > 0 && selectedIndex >= 0) {
+      if (resultsRef.current && bookmarkResults.length > 0 && selectedIndex >= 0) {
         const el = resultsRef.current.querySelectorAll<HTMLElement>(".bookmark-item")[selectedIndex];
         el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     } else if (isCommandMode && selectedIndex >= 0) {
-      const el = resultsRef.current.children[selectedIndex] as HTMLElement;
-      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    } else if (!isCommandMode) {
-      const totalItems = isSuggestingCommands ? commandSuggestions.length : filteredTabs.length;
-      if (totalItems > 0) {
+      if (resultsRef.current) {
         const el = resultsRef.current.children[selectedIndex] as HTMLElement;
         el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
+    } else if (!isCommandMode && !isSuggestingCommands) {
+      if (mathResult && selectedIndex === 0) {
+        mathRowRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else if (resultsRef.current) {
+        const tabIndex = selectedIndex - (mathResult ? 1 : 0);
+        const el = resultsRef.current.children[tabIndex] as HTMLElement;
+        el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    } else if (isSuggestingCommands && resultsRef.current) {
+      const el = resultsRef.current.children[selectedIndex] as HTMLElement;
+      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
-  }, [selectedIndex, filteredTabs.length, commandSuggestions.length, bookmarkResults.length, isSuggestingCommands, isCommandMode, isBookmarkMode]);
+  }, [selectedIndex, filteredTabs.length, commandSuggestions.length, bookmarkResults.length, isSuggestingCommands, isCommandMode, isBookmarkMode, mathResult]);
 
   const selectCommand = (cmd: CommandMeta) => {
     const suffix = cmd.requiresKeyword === false ? "" : " ";
@@ -561,6 +579,22 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     if (onClose) onClose();
   };
 
+  useEffect(() => {
+    if (mathCopiedTimerRef.current) {
+      clearTimeout(mathCopiedTimerRef.current);
+      mathCopiedTimerRef.current = null;
+    }
+    setMathCopied(false);
+  }, [mathResult?.display]);
+
+  const copyMathResult = () => {
+    if (!mathResult) return;
+    navigator.clipboard.writeText(mathResult.display).catch(() => {});
+    setMathCopied(true);
+    if (mathCopiedTimerRef.current) clearTimeout(mathCopiedTimerRef.current);
+    mathCopiedTimerRef.current = setTimeout(() => setMathCopied(false), 1500);
+  };
+
   const openBookmark = (bookmark: BookmarkItem) => {
     broadcastMsgToServiceWorker({
       action: "openBookmark",
@@ -578,7 +612,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
     } else if (isSuggestingCommands) {
       maxIndex = commandSuggestions.length - 1;
     } else {
-      maxIndex = filteredTabs.length - 1;
+      maxIndex = filteredTabs.length - 1 + (mathResult ? 1 : 0);
     }
 
     switch (e.key) {
@@ -616,16 +650,23 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
         } else if (isSuggestingCommands) {
           const cmd = commandSuggestions[selectedIndex] ?? commandSuggestions[0];
           if (cmd) selectCommand(cmd);
-        } else if (filteredTabs[selectedIndex]) {
-          const tab = filteredTabs[selectedIndex];
-          // Send message before onClose - in popup mode, window.close() kills the JS context
-          // before async messages fire if called first.
-          if (tab.source === "recent") {
-            broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
+        } else {
+          const tabOffset = mathResult ? 1 : 0;
+          if (mathResult && selectedIndex === 0) {
+            copyMathResult();
           } else {
-            broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
+            const tab = filteredTabs[selectedIndex - tabOffset];
+            if (tab) {
+              // Send message before onClose - in popup mode, window.close() kills the JS context
+              // before async messages fire if called first.
+              if (tab.source === "recent") {
+                broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
+              } else {
+                broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
+              }
+              if (onClose) onClose();
+            }
           }
-          if (onClose) onClose();
         }
         break;
       case " ":
@@ -709,37 +750,54 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
           </Fragment>
         ) : (
           <Fragment>
+            {mathResult && (
+              <div
+                ref={mathRowRef}
+                className={`math-result${selectedIndex === 0 ? " selected" : ""}`}
+                onClick={copyMathResult}
+                title="Click to copy"
+              >
+                <span className="math-result-icon">=</span>
+                <span className="math-result-expr">{mathResult.expr}</span>
+                <span className="math-result-eq"> = </span>
+                <span className="math-result-value">{mathResult.display}</span>
+                {mathCopied && <span className="math-result-copied">Copied!</span>}
+              </div>
+            )}
             {filteredTabs.length > 0 ? (
               <Fragment>
                 <div className="tab-count">
                   {filteredTabs.length} result{filteredTabs.length !== 1 ? "s" : ""}
                 </div>
                 <ul className="search-results" ref={resultsRef}>
-                  {filteredTabs.map((tab, index) => (
-                    <li
-                      key={tab.resultId}
-                      onClick={() => {
-                        if (tab.source === "recent") {
-                          broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
-                        } else {
-                          broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
-                        }
-                        if (onClose) onClose();
-                      }}
-                      className={[
-                        "tab-item",
-                        index === selectedIndex ? "selected" : "",
-                        tab.source === "open" && tab.active ? "active-tab" : "",
-                        tab.source === "recent" ? "recent-tab" : "",
-                      ].filter(Boolean).join(" ")}
-                    >
-                      <TabComponent tab={tab} />
-                    </li>
-                  ))}
+                  {filteredTabs.map((tab, index) => {
+                    const itemIndex = index + (mathResult ? 1 : 0);
+                    return (
+                      <li
+                        key={tab.resultId}
+                        onClick={() => {
+                          if (tab.source === "recent") {
+                            broadcastMsgToServiceWorker({ action: "restoreRecentlyClosed", data: { sessionId: tab.sessionId } });
+                          } else {
+                            broadcastMsgToServiceWorker({ action: "switchToTab", data: { tabId: tab.id!, windowId: tab.windowId } });
+                          }
+                          if (onClose) onClose();
+                        }}
+                        className={[
+                          "tab-item",
+                          itemIndex === selectedIndex ? "selected" : "",
+                          tab.source === "open" && tab.active ? "active-tab" : "",
+                          tab.source === "recent" ? "recent-tab" : "",
+                        ].filter(Boolean).join(" ")}
+                      >
+                        <TabComponent tab={tab} />
+                      </li>
+                    );
+                  })}
                 </ul>
               </Fragment>
             ) : (
-              <div className="no-results">No matching tabs found</div>
+              !mathResult && <div className="no-results">No matching tabs found</div>
             )}
           </Fragment>
         )}
