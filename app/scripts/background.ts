@@ -270,11 +270,18 @@ browser.tabs.onUpdated.addListener(async (tabId: number, changeInfo: browser.Tab
 
 browser.commands.onCommand.addListener(async (command: string) => {
   try {
-    const activeTabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-    if (!activeTabs || activeTabs.length === 0) return;
+    let activeTabId: number | undefined;
+    let activeWindowId: number | undefined;
 
-    const activeTabId = activeTabs[0].id;
-    const activeWindowId = activeTabs[0].windowId;
+    const activeTabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+    if (activeTabs && activeTabs.length > 0) {
+      activeTabId = activeTabs[0].id;
+      activeWindowId = activeTabs[0].windowId;
+    } else {
+      // Fallback when tab is suspended/inactive — query fails but tab is still trackable
+      activeTabId = (await activeTabIdStore.get()) as number;
+      activeWindowId = (await activeWindowIdStore.get()) as number;
+    }
 
     if (!activeTabId || !activeWindowId) {
       return;
