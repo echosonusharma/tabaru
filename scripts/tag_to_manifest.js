@@ -37,6 +37,18 @@ const PATH_TO_WEBSITE = './web/index.html';
       throw new Error('Failed to determine new version');
     }
 
+    // Guard: new version must be strictly greater than current (no downgrade / re-release)
+    if (!semver.gt(newVersion, currentVersion)) {
+      throw new Error(`New version ${newVersion} must be greater than current ${currentVersion}`);
+    }
+
+    // Guard: tag must not already exist (before any file/git side effects)
+    const tagName = `v${newVersion}`;
+    const existingTag = execSync(`git tag --list ${tagName}`, { encoding: 'utf-8' }).trim();
+    if (existingTag) {
+      throw new Error(`Tag ${tagName} already exists`);
+    }
+
     console.log(`Bumping version from ${currentVersion} to ${newVersion}`);
 
     // Update manifest.json
@@ -53,12 +65,11 @@ const PATH_TO_WEBSITE = './web/index.html';
     const updatedHtml = html.replace(/v\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(?=\s*&nbsp;·&nbsp;\s*open source)/, `v${newVersion}`);
     writeFileSync(PATH_TO_WEBSITE, updatedHtml, { encoding: 'utf-8' });
 
-    // create git tag
-    const tagName = `v${newVersion}`;
+    // create git tag locally first, then push commit + tag together
     execSync(`git add ${PATH_TO_MANIFEST} ${PATH_TO_PACKAGE} ${PATH_TO_WEBSITE}`);
     execSync(`git commit -m "release: bump version to ${newVersion}"`);
-    execSync(`git push origin`);
     execSync(`git tag ${tagName}`);
+    execSync(`git push origin`);
     execSync(`git push origin ${tagName}`);
     console.log('done!');
   } catch (err) {
