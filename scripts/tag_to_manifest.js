@@ -28,7 +28,7 @@ const PATH_TO_WEBSITE = './web/index.html';
     if (['major', 'minor', 'patch', 'prerelease', 'premajor', 'preminor', 'prepatch'].includes(bumpType)) {
       newVersion = semver.inc(currentVersion, bumpType);
     } else if (semver.valid(bumpType)) {
-      newVersion = bumpType;
+      newVersion = semver.valid(bumpType); // strips leading 'v' so tag isn't 'vv...'
     } else {
       throw new Error(`Invalid version bump type or explicit version: ${bumpType}`);
     }
