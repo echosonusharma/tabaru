@@ -246,6 +246,54 @@ browser.tabs.onRemoved.addListener((tabId: number, removeInfo: browser.Tabs.OnRe
   });
 });
 
+browser.tabs.onDetached.addListener((tabId: number, detachInfo: browser.Tabs.OnDetachedDetachInfoType) => {
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      const windowTabIds = tabsData[detachInfo.oldWindowId];
+      if (!windowTabIds) return;
+      tabsData[detachInfo.oldWindowId] = windowTabIds.filter((id) => id !== tabId);
+      await tabsStore.set(tabsData);
+    } catch (error) {
+      logger(`Error in onDetached tab:`, error);
+    }
+  });
+});
+
+browser.tabs.onAttached.addListener((tabId: number, attachInfo: browser.Tabs.OnAttachedAttachInfoType) => {
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      if (!tabsData[attachInfo.newWindowId]) tabsData[attachInfo.newWindowId] = [];
+      // Guard against duplicate insert if attach fires more than once.
+      tabsData[attachInfo.newWindowId] = tabsData[attachInfo.newWindowId].filter((id) => id !== tabId);
+      tabsData[attachInfo.newWindowId].splice(attachInfo.newPosition, 0, tabId);
+      await tabsStore.set(tabsData);
+    } catch (error) {
+      logger(`Error in onAttached tab:`, error);
+    }
+  });
+});
+
+browser.tabs.onReplaced.addListener((addedTabId: number, removedTabId: number) => {
+  withTabStoreLock(async () => {
+    try {
+      const tabsData: TabData = (await tabsStore.get()) ?? {};
+      for (const windowId of Object.keys(tabsData)) {
+        const windowTabIds = tabsData[Number(windowId)];
+        const idx = windowTabIds.findIndex((id) => id === removedTabId);
+        if (idx !== -1) {
+          windowTabIds[idx] = addedTabId;
+          await tabsStore.set(tabsData);
+          return;
+        }
+      }
+    } catch (error) {
+      logger(`Error in onReplaced tab:`, error);
+    }
+  });
+});
+
 browser.tabs.onActivated.addListener(async (activeInfo: browser.Tabs.OnActivatedActiveInfoType) => {
   const previousTabId = (await activeTabIdStore.get()) as number;
 
@@ -323,25 +371,11 @@ async function handleTabMoveCmd(
   activeWindowId: number
 ): Promise<void> {
   try {
-    let windowTabIds = tabIdsData[activeWindowId];
-    let currentTabIndex = windowTabIds?.findIndex((id) => id === activeTabId) ?? -1;
+    const windowTabIds = tabIdsData[activeWindowId];
+    if (!windowTabIds || windowTabIds.length <= 1) return;
 
-    if (currentTabIndex === -1) {
-      // Store is stale - rebuild from live browser state and retry
-      const realTabs = await browser.tabs.query({ windowId: activeWindowId });
-      realTabs.sort((a, b) => a.index - b.index);
-      windowTabIds = realTabs.map((t) => t.id!).filter((id) => id !== undefined);
-      currentTabIndex = windowTabIds.findIndex((id) => id === activeTabId);
-      if (currentTabIndex === -1) return;
-      // Repair the store while we're here
-      withTabStoreLock(async () => {
-        const fresh: TabData = (await tabsStore.get()) ?? {};
-        fresh[activeWindowId] = windowTabIds!;
-        await tabsStore.set(fresh);
-      });
-    }
-
-    if (windowTabIds.length <= 1) return;
+    const currentTabIndex = windowTabIds.findIndex((id) => id === activeTabId);
+    if (currentTabIndex === -1) return;
 
     const newIndex = (currentTabIndex + direction + windowTabIds.length) % windowTabIds.length;
     await browser.tabs.update(windowTabIds[newIndex], { active: true });
