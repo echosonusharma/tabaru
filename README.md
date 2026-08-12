@@ -12,42 +12,20 @@
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc">Chrome Web Store</a>
   ·
-  <a href="https://tabaru.app">Website</a>
+  <a href="https://tabaru.echosonusharma.in">Website</a>
   ·
   <a href="PRIVACY_POLICY.md">Privacy</a>
 </p>
 
 ## Features
 
-### Fuzzy tab search
-One overlay searches every open tab across every window, plus recently closed sessions. Character-rank scoring with sub-millisecond match. Switch to a tab, restore a closed one, kill the current tab, or reorder tabs left/right without ever touching the mouse.
-
-### Auto tab groups *(Chromium)*
-Define URL pattern rules like `https://*.github.com/*`. Matching tabs auto-group with a custom title, color, and collapsed state. Set it once, forget it.
-
-### Commands
-- `!s <query>` - web search or jump straight to a domain
-- `!b <query>` - fuzzy-search bookmarks, grouped by folder
-- `!d` - close duplicate tabs across all windows (keeps the active / pinned / newest)
-- `!c <query>` - bulk-close every tab whose title or URL contains the query
-- `!sv <name>` - snapshot the current window's tabs under a name
-- `!op <name>` - restore a saved session in a new window
-
-### New tab page
-Replaces your browser's default new tab with something useful:
-- Clock (12h / 24h) and greeting
-- Live weather via Open-Meteo or wttr.in, with animated weather effects
-- Quick-access links pulled from your most-visited sites
-- Wallpaper modes: solid color, gradient, or random photo (Picsum)
-
-### Themes
-Tabaru, Forest, Mocha, Midnight. Swap instantly, no reload.
-
-### Privacy
-Zero telemetry. No analytics. No remote backend. Everything runs locally in the browser - the only outbound calls are optional weather and wallpaper fetches you opt into.
-
-### Cross-browser
-Chrome, Firefox, Edge, Opera. Manifest V3.
+- **Fuzzy tab search** - Search every open tab and recently closed session. Switch, restore, close, or reorder without the mouse.
+- **Auto tab groups** *(Chromium)* - Group tabs by URL patterns with custom title, color, and collapse state.
+- **Commands** - `!s` web search, `!b` bookmarks, `!d` dedupe tabs, `!c` bulk close, `!sv` / `!op` session snapshots.
+- **New tab page** - Clock, weather, quick links, and wallpaper modes.
+- **Themes** - Tabaru, Forest, Mocha, Midnight.
+- **Privacy** - No telemetry or remote backend. Optional weather and wallpaper fetches only.
+- **Cross-browser** - Chrome, Firefox, Edge, Opera (Manifest V3).
 
 ## Shortcuts
 
@@ -57,18 +35,16 @@ Chrome, Firefox, Edge, Opera. Manifest V3.
 | Next tab | `Alt+X` |
 | Previous tab | `Alt+Z` |
 | Close current tab | `Alt+W` |
-| Move tab left | custom |
-| Move tab right | custom |
-| Next window | custom |
-| Previous window | custom |
+| Move tab left / right | custom |
+| Next / previous window | custom |
 
-All shortcuts are suggestions. Remap any of them in your browser's extension shortcut settings.
+All shortcuts are suggestions - remap any of them in your browser's extension settings.
 
 ## Install
 
-**Chrome / Edge / Opera** - install from the [Chrome Web Store](https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc).
+**Chrome / Edge / Opera** - [Chrome Web Store](https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc)
 
-**Firefox** - grab the latest `.xpi` from [GitHub Releases](https://github.com/echosonusharma/tabaru/releases/latest) and install it.
+**Firefox** - latest `.xpi` from [GitHub Releases](https://github.com/echosonusharma/tabaru/releases/latest)
 
 ## Build from source
 
@@ -82,4 +58,4 @@ Output lands in `dist/<browser>`.
 
 ## License
 
-MIT
+[GPL-3.0](LICENSE)
