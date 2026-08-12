@@ -10,11 +10,11 @@
 </p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc">Chrome Web Store</a>
+  <a href="https://chromewebstore.google.com/detail/tabaru/ameinjfiidfphkdbmdhlebibjgafdokc" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>
   ·
-  <a href="https://tabaru.echosonusharma.in">Website</a>
+  <a href="https://tabaru.echosonusharma.in" target="_blank" rel="noopener noreferrer">Website</a>
   ·
-  <a href="PRIVACY_POLICY.md">Privacy</a>
+  <a href="PRIVACY_POLICY.md" target="_blank" rel="noopener noreferrer">Privacy</a>
 </p>
 
 ## Features
