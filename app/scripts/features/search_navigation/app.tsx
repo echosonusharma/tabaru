@@ -256,7 +256,13 @@ function useSearch() {
         action: "orderTabsBySearchKeyword",
         data: { searchKeyword: searchQuery, tabs },
       })
-        .then((res) => { if (!cancelled) setFilteredTabs(res as SearchableTab[]); })
+        .then((res) => {
+          if (!cancelled) {
+            const results = res as SearchableTab[];
+            setFilteredTabs(results);
+            setSelectedIndex((prev) => results.length > 0 ? Math.max(0, Math.min(prev, results.length - 1)) : 0);
+          }
+        })
         .catch((e) => console.error("Search error:", e));
     }, 50);
     setSelectedIndex(0);
@@ -526,27 +532,31 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
   useEffect(() => searchInputRef.current?.focus(), []);
 
   useEffect(() => {
+    if (resultsRef.current) resultsRef.current.scrollTop = 0;
+  }, [searchQuery]);
+
+  useEffect(() => {
     if (isBookmarkMode) {
       if (resultsRef.current && bookmarkResults.length > 0 && selectedIndex >= 0) {
         const el = resultsRef.current.querySelectorAll<HTMLElement>(".bookmark-item")[selectedIndex];
-        el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        el?.scrollIntoView({ block: "nearest", behavior: "instant" });
       }
     } else if (isCommandMode && selectedIndex >= 0) {
       if (resultsRef.current) {
         const el = resultsRef.current.children[selectedIndex] as HTMLElement;
-        el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        el?.scrollIntoView({ block: "nearest", behavior: "instant" });
       }
     } else if (!isCommandMode && !isSuggestingCommands) {
       if (mathResult && selectedIndex === 0) {
-        mathRowRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        mathRowRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
       } else if (resultsRef.current) {
         const tabIndex = selectedIndex - (mathResult ? 1 : 0);
         const el = resultsRef.current.children[tabIndex] as HTMLElement;
-        el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        el?.scrollIntoView({ block: "nearest", behavior: "instant" });
       }
     } else if (isSuggestingCommands && resultsRef.current) {
       const el = resultsRef.current.children[selectedIndex] as HTMLElement;
-      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      el?.scrollIntoView({ block: "nearest", behavior: "instant" });
     }
   }, [selectedIndex, filteredTabs.length, commandSuggestions.length, bookmarkResults.length, isSuggestingCommands, isCommandMode, isBookmarkMode, mathResult]);
 
@@ -622,7 +632,7 @@ export function SearchApp({ onClose }: { onClose?: () => void }) {
       case "ArrowDown":
         e.preventDefault();
         setHasNavigated(true);
-        setSelectedIndex((prev) => Math.min(prev + 1, maxIndex));
+        if (maxIndex >= 0) setSelectedIndex((prev) => Math.min(prev + 1, maxIndex));
         break;
       case "ArrowUp":
         e.preventDefault();
